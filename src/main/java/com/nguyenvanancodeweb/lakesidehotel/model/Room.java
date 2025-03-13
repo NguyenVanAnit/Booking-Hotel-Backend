@@ -23,6 +23,19 @@ public class Room {
     private BigDecimal roomPrice;
     private boolean isBooked = false;
 
+    private String name;
+    private String description;
+    private int floor;
+    private Double pricePerDate;
+    private int state;
+    private int maxNumberAdult;
+    private int maxNumberChildren;
+    private int maxNumberPeople;
+    private int ageLimit;
+    private int numberBed;
+
+
+
     @Lob
     private Blob photo;
 
@@ -39,8 +52,10 @@ public class Room {
         }
         bookings.add(booking);
         booking.setRoom(this);
-        isBooked = true;
+//        isBooked = true;
         String bookingCode = RandomStringUtils.randomNumeric(10); //Tạo chuỗi code ngẫu nhiên khi đặt phòng gồm 10 ký tự
         booking.setBookingConfirmationCode(bookingCode);
     }
+
+
 }

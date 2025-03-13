@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Data
 @AllArgsConstructor
@@ -20,20 +21,31 @@ public class BookingResponse {
 
     private String guestEmail;
 
-    private int NumOfChildren;
-
     private int NumOfAdults;
-
-    private int totalNumberOfGuest;
 
     private String bookingConfirmationCode;
 
+    private String bookingTime;
+
+    private int status;
+
+    private String accountBank;
+
+    private String nameUserBank;
+
+    private String phoneNumber;
+
+    private String transactionCode;
+
+    private String bank;
+
     private RoomResponse room;
 
-    public BookingResponse(Long bookingId, LocalDate checkInDate, LocalDate checkOutDate, String bookingConfirmationCode) {
+    public BookingResponse(Long bookingId, LocalDate checkInDate, LocalDate checkOutDate, String bookingConfirmationCode, String bookingTime) {
         this.bookingId = bookingId;
         this.checkInDate = checkInDate;
         this.checkOutDate = checkOutDate;
         this.bookingConfirmationCode = bookingConfirmationCode;
+        this.bookingTime = bookingTime;
     }
 }

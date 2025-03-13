@@ -6,7 +6,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.sql.Blob;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -31,37 +33,36 @@ public class BookedRoom {
     @Column(name = "guest_Email")
     private String guestEmail;
 
-    @Column(name = "children")
-    private int NumOfChildren;
-
     @Column(name = "adults")
     private int NumOfAdults;
-
-    @Column(name = "total_guest")
-    private int totalNumberOfGuest;
 
     @Column(name = "confirmation_Code")
     private String bookingConfirmationCode;
 
+    @Column(name = "booking_time")
+    private String bookingTime;
+
+    @Column(name = "status", nullable = false)
+    private int status = 0;
+
+    @Column(name = "account_bank")
+    private String accountBank;
+
+    @Column(name = "name_user_bank")
+    private String nameUserBank;
+
+    @Column(name = "phone_number")
+    private String phoneNumber;
+
+    @Column(name = "transaction_code")
+    private String transactionCode;
+
+    @Column(name = "bank")
+    private String bank;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "room_id")
     private Room room;
-
-    //Tổng số khách bằng tổng số ng lớn và trẻ em
-    public void calculateTotalNumberOfGuest(){
-        this.totalNumberOfGuest = this.NumOfAdults + this.NumOfChildren;
-    }
-
-    //Mỗi khi ng dùng thay đổi số lượng ng lớn hoặc trẻ em thì cập nhật lại tổng số khách
-    public void setNumOfChildren(int numOfChildren) {
-        NumOfChildren = numOfChildren;
-        calculateTotalNumberOfGuest();
-    }
-
-    public void setNumOfAdults(int numOfAdults) {
-        NumOfAdults = numOfAdults;
-        calculateTotalNumberOfGuest();
-    }
 
     public void setBookingConfirmationCode(String bookingConfirmationCode) {
         this.bookingConfirmationCode = bookingConfirmationCode;
