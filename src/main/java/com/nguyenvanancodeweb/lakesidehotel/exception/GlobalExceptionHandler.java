@@ -12,4 +12,5 @@ public class GlobalExceptionHandler {
     public ResponseEntity<Map<String, String>> handleInvalidPagination(InvalidPaginationException e){
         return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
     }
+
 }

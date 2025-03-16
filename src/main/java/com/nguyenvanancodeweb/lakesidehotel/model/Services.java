@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -23,7 +24,7 @@ public class Services {
     private String name;
     private String description;
     private boolean isActive;
-    private double priceService;
+    private BigDecimal priceService;
     private String serviceType;
     private boolean isFree;
     private int maxQuantity;
