@@ -12,6 +12,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -114,19 +115,14 @@ public class RoomService implements IRoomService {
     }
 
     @Override
-    public List<Room> getAvailableRooms(LocalDate checkInDate, LocalDate checkOutDate, int numberAdult,
+    public Page<Room> getAvailableRooms(LocalDate checkInDate, LocalDate checkOutDate, int numberAdult,
                                         int numberChildren, int pageNumber, int pageSize) {
         if (pageNumber < 0 || pageSize < 1) {
             throw new InvalidPaginationException("Số trang hoặc kích thước trang không hợp lệ");
         }
-        List<Room> allRooms = roomRepository.findAvailableRoomByFilterStart(checkInDate, checkOutDate, numberAdult,
-                numberChildren);
-        int fromList = pageNumber * pageSize;
-        if (fromList >= allRooms.size()) {
-            return new ArrayList<>();
-        }
-        int toList = Math.min(fromList + pageSize, allRooms.size());
-        return allRooms.subList(fromList, toList);
+        Pageable pageable = PageRequest.of(pageNumber, pageSize, Sort.by("id").ascending());
+        return roomRepository.findAvailableRoomByFilterStart(checkInDate, checkOutDate, numberAdult,
+                numberChildren, pageable);
     }
 
     @Override

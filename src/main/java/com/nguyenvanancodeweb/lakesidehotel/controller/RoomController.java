@@ -123,17 +123,17 @@ public class RoomController {
     }
 
     @GetMapping("/available-rooms")
-    public ResponseEntity<List<AllRoomResponse>> getAvailableRooms(
+    public ResponseEntity<Page<AllRoomResponse>> getAvailableRooms(
             @RequestParam() @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate checkInDate,
             @RequestParam() @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate checkOutDate,
             @RequestParam() int numberAdult, @RequestParam() int numberChildren,
             @RequestParam(defaultValue = "1") int pageNumber,
             @RequestParam(defaultValue = "10") int pageSize
     ) throws SQLException {
-        List<Room> availableRooms = roomService.getAvailableRooms(checkInDate, checkOutDate, numberAdult,
+        Page<Room> availableRooms = roomService.getAvailableRooms(checkInDate, checkOutDate, numberAdult,
                 numberChildren, pageNumber - 1, pageSize);
-        List<AllRoomResponse> allRoomRespons = new ArrayList<>();
-        for (Room room : availableRooms) {
+        Page<AllRoomResponse> allRoomRespons = availableRooms.map(AllRoomResponse::new);
+//        for (Room room : availableRooms) {
 //            byte[] photoBytes = roomService.getRoomPhotoByRoomId(room.getId());
 //            if (photoBytes != null && photoBytes.length > 0) {
 //                String photoBase64 = Base64.encodeBase64String(photoBytes);
@@ -141,14 +141,8 @@ public class RoomController {
 ////                allRoomResponse.setPhoto1(photoBase64);
 //                allRoomRespons.add(allRoomResponse);
 //            }
-            AllRoomResponse allRoomResponse = new AllRoomResponse(room);
-            allRoomRespons.add(allRoomResponse);
-        }
-        if (allRoomRespons.isEmpty()) {
-            return ResponseEntity.noContent().build();
-        } else {
-            return ResponseEntity.ok(allRoomRespons);
-        }
+//        }
+        return ResponseEntity.ok(allRoomRespons);
     }
 
     // Tạo đối tượng roomResponse dùng nhiều lần mỗi khi thao tác với đối tượng này

@@ -32,6 +32,6 @@ public interface IRoomService {
 
     Optional<Room> getRoomById(Long roomId);
 
-    List<Room> getAvailableRooms(LocalDate checkInDate, LocalDate checkOutDate, int numberAdult, int numberChildren,
+    Page<Room> getAvailableRooms(LocalDate checkInDate, LocalDate checkOutDate, int numberAdult, int numberChildren,
                                  int pageNumber, int pageSize);
 }

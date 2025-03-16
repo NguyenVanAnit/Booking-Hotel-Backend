@@ -1,6 +1,8 @@
 package com.nguyenvanancodeweb.lakesidehotel.repository;
 
 import com.nguyenvanancodeweb.lakesidehotel.model.Room;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -18,6 +20,6 @@ public interface RoomRepository extends JpaRepository<Room, Long> {
             "  SELECT br.room.id FROM BookedRoom br " +
             "  WHERE ((br.checkInDate <= :checkOutDate) AND (br.checkOutDate >= :checkInDate))" +
             ")")
-    List<Room> findAvailableRoomByFilterStart(LocalDate checkInDate, LocalDate checkOutDate, int numberAdult,
-                                              int numberChildren);
+    Page<Room> findAvailableRoomByFilterStart(LocalDate checkInDate, LocalDate checkOutDate, int numberAdult,
+                                              int numberChildren, Pageable pageable);
 }
