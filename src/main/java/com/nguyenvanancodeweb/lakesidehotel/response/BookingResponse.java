@@ -1,11 +1,11 @@
 package com.nguyenvanancodeweb.lakesidehotel.response;
 
+import com.nguyenvanancodeweb.lakesidehotel.response.room.AllRoomResponse;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 @Data
 @AllArgsConstructor
@@ -39,7 +39,7 @@ public class BookingResponse {
 
     private String bank;
 
-    private RoomResponse room;
+    private AllRoomResponse room;
 
     public BookingResponse(Long bookingId, LocalDate checkInDate, LocalDate checkOutDate, String bookingConfirmationCode, String bookingTime) {
         this.bookingId = bookingId;

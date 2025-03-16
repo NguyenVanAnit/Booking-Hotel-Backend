@@ -7,6 +7,8 @@ import org.apache.commons.lang3.RandomStringUtils;
 import java.math.BigDecimal;
 import java.sql.Blob;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 
 @Entity
@@ -22,11 +24,9 @@ public class Room {
     private String roomType;
     private BigDecimal roomPrice;
     private boolean isBooked = false;
-
     private String name;
     private String description;
     private int floor;
-    private Double pricePerDate;
     private int state;
     private int maxNumberAdult;
     private int maxNumberChildren;
@@ -34,13 +34,29 @@ public class Room {
     private int ageLimit;
     private int numberBed;
 
-
+    @Lob
+    private Blob photo1;
 
     @Lob
-    private Blob photo;
+    private Blob photo2;
+
+    @Lob
+    private Blob photo3;
+
+    @Lob
+    private Blob photo4;
 
     @OneToMany(mappedBy = "room", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<BookedRoom> bookings;
+
+    @OneToMany(mappedBy = "room", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<HistoryBooking> historyBookings = new ArrayList<>();
+
+    @OneToMany(mappedBy = "room", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<Rate> rates = new ArrayList<>();
+
+    @ManyToMany(mappedBy = "rooms")
+    private Collection<Services> services = new HashSet<>();
 
     public Room(){
         this.bookings = new ArrayList<>();

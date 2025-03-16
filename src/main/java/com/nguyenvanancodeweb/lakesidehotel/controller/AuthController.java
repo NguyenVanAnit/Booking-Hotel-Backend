@@ -67,8 +67,14 @@ public class AuthController {
 
     @PostMapping("/logout")
     public ResponseEntity<?> logoutUser() {
+//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+//
+//        if (authentication == null || authentication instanceof UsernamePasswordAuthenticationToken) {
+//            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Chưa đăng nhập tài khoản!");
+//        }
+
         // Xóa thông tin xác thực khỏi SecurityContext
         SecurityContextHolder.clearContext();
-        return ResponseEntity.ok("User logged out successfully.");
+        return ResponseEntity.ok("Đăng xuất thành công");
     }
 }

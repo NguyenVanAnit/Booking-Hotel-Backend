@@ -5,20 +5,15 @@ import com.nguyenvanancodeweb.lakesidehotel.exception.ResourceNotFoundException;
 import com.nguyenvanancodeweb.lakesidehotel.model.BookedRoom;
 import com.nguyenvanancodeweb.lakesidehotel.model.Room;
 import com.nguyenvanancodeweb.lakesidehotel.response.BookingResponse;
-import com.nguyenvanancodeweb.lakesidehotel.response.RoomResponse;
-import com.nguyenvanancodeweb.lakesidehotel.service.BookingService;
+import com.nguyenvanancodeweb.lakesidehotel.response.room.AllRoomResponse;
 import com.nguyenvanancodeweb.lakesidehotel.service.IBookingService;
 import com.nguyenvanancodeweb.lakesidehotel.service.IRoomService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.InputStream;
-import java.sql.Blob;
 import java.util.ArrayList;
-import java.util.Base64;
 import java.util.List;
 
 
@@ -100,10 +95,7 @@ public class BookingController {
 
     private BookingResponse getBookingResponse(BookedRoom booking) {
         Room theRoom = roomService.getRoomById(booking.getRoom().getId()).get();
-        RoomResponse room = new RoomResponse(
-                theRoom.getId(),
-                theRoom.getRoomType(),
-                theRoom.getRoomPrice());
+        AllRoomResponse room = new AllRoomResponse(theRoom);
 
         return new BookingResponse(booking.getBookingId(), booking.getCheckInDate(),
                 booking.getCheckOutDate(), booking.getGuestFullName(),

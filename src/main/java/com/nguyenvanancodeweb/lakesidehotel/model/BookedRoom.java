@@ -9,6 +9,7 @@ import lombok.Setter;
 import java.sql.Blob;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Getter
@@ -60,9 +61,15 @@ public class BookedRoom {
     @Column(name = "bank")
     private String bank;
 
+    @OneToOne(mappedBy = "bookedRoom", cascade = CascadeType.ALL)
+    private Rate rate;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "room_id")
     private Room room;
+
+    @OneToMany(mappedBy = "bookedRoom", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<ServiceBooked> serviceBookeds;
 
     public void setBookingConfirmationCode(String bookingConfirmationCode) {
         this.bookingConfirmationCode = bookingConfirmationCode;
