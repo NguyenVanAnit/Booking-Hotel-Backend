@@ -5,6 +5,7 @@ import com.nguyenvanancodeweb.lakesidehotel.model.BookedRoom;
 import com.nguyenvanancodeweb.lakesidehotel.model.Room;
 import com.nguyenvanancodeweb.lakesidehotel.repository.BookingRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -83,6 +84,11 @@ public class BookingService implements IBookingService {
         booking.setStatus(2);
         bookingRepository.save(booking);
     }
+
+//    @Override
+//    public Page<BookedRoom> getHistoryBooking(int pageNumber, int pageSize, Long roomId, Long userId){
+//
+//    }
 
     private Boolean roomIsAvailable(BookedRoom bookingRequest, List<BookedRoom> existingBookings) {
         return existingBookings.stream()

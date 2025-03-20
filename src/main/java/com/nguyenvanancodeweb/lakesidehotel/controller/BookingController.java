@@ -9,6 +9,7 @@ import com.nguyenvanancodeweb.lakesidehotel.response.room.AllRoomResponse;
 import com.nguyenvanancodeweb.lakesidehotel.service.IBookingService;
 import com.nguyenvanancodeweb.lakesidehotel.service.IRoomService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -92,6 +93,11 @@ public class BookingController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
+
+//    @GetMapping("/history-booking")
+//    public ResponseEntity<Page<BookingResponse>> getBookingsHistory() {
+//
+//    }
 
     private BookingResponse getBookingResponse(BookedRoom booking) {
         Room theRoom = roomService.getRoomById(booking.getRoom().getId()).get();
