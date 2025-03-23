@@ -30,8 +30,14 @@ public interface IRoomService {
                     int floor, int maxNumberAdult, int maxNumberChildren, int maxNumberPeople, int ageLimit,
                     int numberBed ) throws ResourceNotFoundException;
 
-    Optional<Room> getRoomById(Long roomId);
+    Room getRoomById(Long roomId);
 
     Page<Room> getAvailableRooms(LocalDate checkInDate, LocalDate checkOutDate, int numberAdult, int numberChildren,
                                  int pageNumber, int pageSize);
+
+    Boolean checkAvailableRoom(Long roomId, LocalDate checkInDate, LocalDate checkOutDate);
+
+    List<LocalDate> getAvailableDaysInMonth(Long roomId, int year, int month);
+
+    void validateRoomExists(Long roomId) throws ResourceNotFoundException;
 }

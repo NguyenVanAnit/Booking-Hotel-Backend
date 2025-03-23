@@ -2,6 +2,8 @@ package com.nguyenvanancodeweb.lakesidehotel.controller;
 
 import com.nguyenvanancodeweb.lakesidehotel.model.Services;
 import com.nguyenvanancodeweb.lakesidehotel.request.ServicesRequest;
+import com.nguyenvanancodeweb.lakesidehotel.response.DTO.ApiResponseDTO;
+import com.nguyenvanancodeweb.lakesidehotel.response.DTO.DataResponseDTO;
 import com.nguyenvanancodeweb.lakesidehotel.response.ServicesResponse;
 import com.nguyenvanancodeweb.lakesidehotel.service.IServicesService;
 import jakarta.validation.Valid;
@@ -19,28 +21,38 @@ public class ServicesController {
     private final IServicesService servicesService;
 
     @PostMapping("/add-service")
-    public ResponseEntity<String> addServices (@Valid @RequestBody ServicesRequest servicesRequest) {
+    public ResponseEntity<ApiResponseDTO<Void>> addServices (@Valid @RequestBody ServicesRequest servicesRequest) {
         Services services = servicesService.addService(servicesRequest);
-        return ResponseEntity.ok("Thêm dịch vụ thành công!");
+        return ResponseEntity.ok(new ApiResponseDTO<>(true, "Thêm dịch vụ thành công!"));
     }
 
     @GetMapping("/all-services")
-    public ResponseEntity<Page<ServicesResponse>> getAllServices(@RequestParam int pageNumber,
-                                                                 @RequestParam int pageSize) {
-        Page<ServicesResponse> servicesResponses = servicesService.getAllServices(pageNumber - 1, pageSize);
-        return ResponseEntity.ok(servicesResponses);
+    public ResponseEntity<ApiResponseDTO<List<ServicesResponse>>> getAllServices() {
+        List<ServicesResponse> servicesResponses = servicesService.getAllServices();
+        DataResponseDTO<List<ServicesResponse>> dataResponseDTO = new DataResponseDTO<>(servicesResponses.size(),
+                servicesResponses);
+        return ResponseEntity.ok(new ApiResponseDTO<>(true, "200", dataResponseDTO));
     }
 
     @PutMapping("/update-service/{serviceId}")
-    public ResponseEntity<String> updateServices(@PathVariable Long serviceId ,
+    public ResponseEntity<ApiResponseDTO<Void>> updateServices(@PathVariable Long serviceId ,
             @Valid @RequestBody ServicesRequest servicesRequest) {
         servicesService.updateService(serviceId, servicesRequest);
-        return ResponseEntity.ok("Cập nhật dịch vụ thành công!");
+        return ResponseEntity.ok(new ApiResponseDTO<>(true, "Cập nhật dịch vụ thành công!"));
     }
 
     @DeleteMapping("/delete-service/{serviceId}")
-    public ResponseEntity<String> deleteService(@PathVariable Long serviceId) {
+    public ResponseEntity<ApiResponseDTO<Void>> deleteService(@PathVariable Long serviceId) {
         servicesService.deleteService(serviceId);
-        return ResponseEntity.ok("Xoá phòng thành công!");
+        return ResponseEntity.ok(new ApiResponseDTO<>(true, "Xoá phòng thành công!"));
     }
+
+        @GetMapping("/by-room/{roomId}")
+        public ResponseEntity<ApiResponseDTO<List<ServicesResponse>>> getServicesByRoom(@PathVariable Long roomId) {
+            List<ServicesResponse> servicesResponses = servicesService.getListOfServicesByRoomId(roomId);
+
+            DataResponseDTO<List<ServicesResponse>> dataResponseDTO = new DataResponseDTO<>(servicesResponses.size(),
+                    servicesResponses);
+            return ResponseEntity.ok(new ApiResponseDTO<>(true, "200", dataResponseDTO));
+        }
 }

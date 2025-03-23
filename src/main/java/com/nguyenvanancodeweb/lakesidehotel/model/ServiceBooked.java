@@ -27,5 +27,4 @@ public class ServiceBooked {
     private int quantity;
     private BigDecimal totalPrice;
 
-
 }

@@ -1,9 +1,11 @@
 package com.nguyenvanancodeweb.lakesidehotel.service;
 
+import com.nguyenvanancodeweb.lakesidehotel.exception.IllegalArgumentException;
 import com.nguyenvanancodeweb.lakesidehotel.exception.InternalServerException;
 import com.nguyenvanancodeweb.lakesidehotel.exception.InvalidBookingRequestException;
 import com.nguyenvanancodeweb.lakesidehotel.exception.InvalidPaginationException;
 import com.nguyenvanancodeweb.lakesidehotel.exception.ResourceNotFoundException;
+import com.nguyenvanancodeweb.lakesidehotel.model.BookedRoom;
 import com.nguyenvanancodeweb.lakesidehotel.model.Room;
 import com.nguyenvanancodeweb.lakesidehotel.repository.RoomRepository;
 import com.nguyenvanancodeweb.lakesidehotel.response.room.AllRoomResponse;
@@ -22,9 +24,12 @@ import java.math.BigDecimal;
 import java.sql.Blob;
 import java.sql.SQLException;
 import java.time.LocalDate;
+import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 @Service
 @RequiredArgsConstructor
@@ -110,8 +115,9 @@ public class RoomService implements IRoomService {
     }
 
     @Override
-    public Optional<Room> getRoomById(Long roomId) {
-        return Optional.of(roomRepository.findById(roomId).get());
+    public Room getRoomById(Long roomId) {
+        return roomRepository.findById(roomId)
+                .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy phòng ID: " + roomId));
     }
 
     @Override
@@ -123,6 +129,47 @@ public class RoomService implements IRoomService {
         Pageable pageable = PageRequest.of(pageNumber, pageSize, Sort.by("id").ascending());
         return roomRepository.findAvailableRoomByFilterStart(checkInDate, checkOutDate, numberAdult,
                 numberChildren, pageable);
+    }
+
+    @Override
+    public Boolean checkAvailableRoom(Long roomId, LocalDate checkInDate, LocalDate checkOutDate) {
+//        Room room = roomRepository.findById(roomId)
+//                .orElseThrow(() -> new ResourceNotFoundException("Phòng với ID " + roomId + " không được tìm thấy"));
+//        List<BookedRoom> existingBookings = room.getBookings();
+
+        return true;
+    }
+
+    @Override
+    public List<LocalDate> getAvailableDaysInMonth(Long roomId, int year, int month) {
+        if(month < 1 || month > 12) {
+            throw new IllegalArgumentException("Không tồn tại tháng " + month);
+        }
+        if(year < 1900) {
+            throw new IllegalArgumentException("Không có dữ liệu về năm " + year);
+        }
+        YearMonth yearMonth = YearMonth.of(year, month);
+        LocalDate startOfMonth = yearMonth.atDay(1);
+        LocalDate endOfMonth = yearMonth.atEndOfMonth();
+
+        List<BookedRoom> bookedRoomsInMonth = roomRepository.findBookingsByRoomIdAndMonth(roomId, startOfMonth,
+                endOfMonth);
+        List<LocalDate> bookedDays = bookedRoomsInMonth.stream()
+                .flatMap(booking -> booking.getCheckInDate().datesUntil(booking.getCheckOutDate().plusDays(1)))
+                .collect(Collectors.toList());
+        List<LocalDate> allDaysInMonth = IntStream.rangeClosed(1, yearMonth.lengthOfMonth())
+                .mapToObj(day -> LocalDate.of(year, month, day))
+                .collect(Collectors.toList());
+        return allDaysInMonth.stream()
+                .filter(day -> !bookedDays.contains(day))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public void validateRoomExists(Long roomId) throws ResourceNotFoundException {
+        if (!roomRepository.existsById(roomId)) {
+            throw new ResourceNotFoundException("Không tồn tại phòng ID " + roomId);
+        };
     }
 
     @Override
@@ -141,6 +188,5 @@ public class RoomService implements IRoomService {
         }
         return null;
     }
-
 
 }

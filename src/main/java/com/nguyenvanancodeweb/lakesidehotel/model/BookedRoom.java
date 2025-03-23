@@ -6,9 +6,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.sql.Blob;
+import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
@@ -28,29 +27,25 @@ public class BookedRoom {
     @Column(name = "check_Out")
     private LocalDate checkOutDate;
 
-    @Column(name = "guest_FullName")
-    private String guestFullName;
-
     @Column(name = "guest_Email")
     private String guestEmail;
 
     @Column(name = "adults")
     private int NumOfAdults;
 
+    @Column(name = "children")
+    private int NumOfChildren;
+
+    @Setter
     @Column(name = "confirmation_Code")
     private String bookingConfirmationCode;
 
     @Column(name = "booking_time")
     private String bookingTime;
 
+//    0 - Chờ thanh toán, 1 - Đã thanh toán, 2 - Không thành công, 3 - Đã hủy
     @Column(name = "status", nullable = false)
     private int status = 0;
-
-    @Column(name = "account_bank")
-    private String accountBank;
-
-    @Column(name = "name_user_bank")
-    private String nameUserBank;
 
     @Column(name = "phone_number")
     private String phoneNumber;
@@ -61,21 +56,24 @@ public class BookedRoom {
     @Column(name = "bank")
     private String bank;
 
+    private BigDecimal totalPrice;
+
     @OneToOne(mappedBy = "bookedRoom", cascade = CascadeType.ALL)
     private Rate rate;
 
+    @Setter
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "room_id")
+    @JoinColumn(name = "room_id", nullable = false)
     private Room room;
+
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "user_id", nullable = false)
+//    private User user;
+
+    @Column(name = "user_id")
+    private Long userId;
 
     @OneToMany(mappedBy = "bookedRoom", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<ServiceBooked> serviceBookeds;
 
-    public void setBookingConfirmationCode(String bookingConfirmationCode) {
-        this.bookingConfirmationCode = bookingConfirmationCode;
-    }
-
-    public void setRoom(Room room) {
-        this.room = room;
-    }
 }

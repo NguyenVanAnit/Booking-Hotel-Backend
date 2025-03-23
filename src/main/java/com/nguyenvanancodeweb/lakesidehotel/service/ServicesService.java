@@ -20,6 +20,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ServicesService implements IServicesService {
     private final ServicesRepository servicesRepository;
+    private final IRoomService roomService;
 
     public Services addService(ServicesRequest servicesRequest) {
         if (servicesRequest.getPriceService().compareTo(BigDecimal.ZERO) < 0) {
@@ -33,13 +34,9 @@ public class ServicesService implements IServicesService {
     }
 
     @Override
-    public Page<ServicesResponse> getAllServices(int pageNumber, int pageSize) {
-        if (pageNumber < 0 || pageSize < 1) {
-            throw new InvalidPaginationException("Số trang hoặc kích thước trang không hợp lệ!");
-        }
-        Pageable pageable = PageRequest.of(pageNumber, pageSize);
-        Page<Services> servicesPage = servicesRepository.findAll(pageable);
-        return servicesPage.map(ServicesResponse::new);
+    public List<ServicesResponse> getAllServices() {
+        List<Services> servicesPage = servicesRepository.findAll();
+        return servicesPage.stream().map(ServicesResponse::new).toList();
     }
 
     @Override
@@ -61,6 +58,13 @@ public class ServicesService implements IServicesService {
         Services services = servicesRepository.findById(id)
                         .orElseThrow(() -> new ResourceNotFoundException("Không có phòng với ID: " + id));
         servicesRepository.deleteById(id);
+    }
+
+    @Override
+    public List<ServicesResponse> getListOfServicesByRoomId(Long roomId) {
+        roomService.validateRoomExists(roomId); //check ton tai
+        List<Services> services = servicesRepository.findServicesByRoomId(roomId);
+        return services.stream().map(ServicesResponse::new).toList();
     }
 
     //Dùng để tránh lặp code giữa phần add và update

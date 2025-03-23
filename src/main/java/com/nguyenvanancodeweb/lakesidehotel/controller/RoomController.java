@@ -4,12 +4,13 @@ import com.nguyenvanancodeweb.lakesidehotel.exception.ResourceNotFoundException;
 import com.nguyenvanancodeweb.lakesidehotel.model.BookedRoom;
 import com.nguyenvanancodeweb.lakesidehotel.model.Room;
 import com.nguyenvanancodeweb.lakesidehotel.request.RoomRequest;
+import com.nguyenvanancodeweb.lakesidehotel.response.DTO.ApiResponseDTO;
+import com.nguyenvanancodeweb.lakesidehotel.response.DTO.DataResponseDTO;
 import com.nguyenvanancodeweb.lakesidehotel.response.room.AllRoomResponse;
 import com.nguyenvanancodeweb.lakesidehotel.response.room.DetailRoomResponse;
 import com.nguyenvanancodeweb.lakesidehotel.service.BookingService;
 import com.nguyenvanancodeweb.lakesidehotel.service.IRoomService;
 import lombok.RequiredArgsConstructor;
-import org.apache.tomcat.util.codec.binary.Base64;
 import org.springframework.data.domain.Page;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
@@ -19,9 +20,10 @@ import org.springframework.web.bind.annotation.*;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.time.LocalDate;
-import java.util.ArrayList;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
@@ -37,20 +39,16 @@ public class RoomController {
 
     @PostMapping("/add/new-room")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<String> addNewRoom(
+    public ResponseEntity<ApiResponseDTO<Void>> addNewRoom(
 //            @RequestParam("photo") MultipartFile photo,
             @RequestBody RoomRequest roomRequest
     ) throws SQLException, IOException {
-        try {
-            Room savedRoom = roomService.addNewRoom(roomRequest.getName(), roomRequest.getDescription(),
-                    roomRequest.getRoomType(), roomRequest.getRoomPrice(), roomRequest.getFloor(),
-                    roomRequest.getMaxNumberAdult(), roomRequest.getMaxNumberChildren(),
-                    roomRequest.getMaxNumberPeople(), roomRequest.getAgeLimit(), roomRequest.getNumberBed());
+        Room savedRoom = roomService.addNewRoom(roomRequest.getName(), roomRequest.getDescription(),
+                roomRequest.getRoomType(), roomRequest.getRoomPrice(), roomRequest.getFloor(),
+                roomRequest.getMaxNumberAdult(), roomRequest.getMaxNumberChildren(),
+                roomRequest.getMaxNumberPeople(), roomRequest.getAgeLimit(), roomRequest.getNumberBed());
 //        RoomResponse response = new RoomResponse(savedRoom.getId(), savedRoom.getRoomType(), savedRoom.getRoomPrice());
-            return ResponseEntity.ok("Thêm thành công phòng!");
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body("Lỗi: " + e.getMessage());
-        }
+        return ResponseEntity.ok(new ApiResponseDTO<>(true, "200"));
     }
 
     @GetMapping("/room/types")
@@ -59,7 +57,7 @@ public class RoomController {
     }
 
     @GetMapping("/all-rooms")
-    public ResponseEntity<Page<AllRoomResponse>> getAllRooms(
+    public ResponseEntity<ApiResponseDTO<List<AllRoomResponse>>> getAllRooms(
             @RequestParam(defaultValue = "1") int pageNumber,
             @RequestParam(defaultValue = "10") int pageSize)
             throws SQLException, ResourceNotFoundException {
@@ -76,19 +74,20 @@ public class RoomController {
 //            roomResponses.add(new AllRoomResponse(room));
 //        }
         Page<AllRoomResponse> roomResponses = roomService.getAllRooms(pageNumber - 1, pageSize);
-        return ResponseEntity.ok(roomResponses);
+        List<AllRoomResponse> rooms = roomResponses.getContent().stream().toList();
 
+        DataResponseDTO<List<AllRoomResponse>> listDataResponseDTO = new DataResponseDTO<>(
+                (int) roomResponses.getTotalElements(), rooms);
+        ApiResponseDTO<List<AllRoomResponse>> apiResponseDTO = new ApiResponseDTO<>(true, "200",
+                listDataResponseDTO);
+        return ResponseEntity.ok(apiResponseDTO);
     }
 
     @DeleteMapping("/delete/room/{roomId}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<String> deleteRoom(@PathVariable Long roomId) {
-        try {
+    public ResponseEntity<ApiResponseDTO<Void>> deleteRoom(@PathVariable Long roomId) {
             roomService.deleteRoom(roomId);
-            return ResponseEntity.ok("Phòng được xóa thành công");
-        } catch (ResourceNotFoundException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+            return ResponseEntity.ok(new ApiResponseDTO<>(true, "Phòng được xóa thành công"));
     }
 
     // thừa exception ResourceNotFoundException
@@ -103,8 +102,8 @@ public class RoomController {
         try {
             Room theRoom = roomService.updateRoom(roomId, roomRequest.getName(), roomRequest.getDescription(),
                     roomRequest.getRoomType(), roomRequest.getRoomPrice(), roomRequest.getFloor(),
-                    roomRequest.getMaxNumberAdult(), roomRequest.getMaxNumberChildren(), roomRequest.getMaxNumberPeople(),
-                    roomRequest.getAgeLimit(), roomRequest.getNumberBed());
+                    roomRequest.getMaxNumberAdult(), roomRequest.getMaxNumberChildren(),
+                    roomRequest.getMaxNumberPeople(), roomRequest.getAgeLimit(), roomRequest.getNumberBed());
 //        theRoom.setPhoto1(photoBlob);
 //        RoomResponse roomResponse = getRoomResponse(theRoom);
             return ResponseEntity.ok("Cập nhật thông tin phòng thành công");
@@ -114,12 +113,14 @@ public class RoomController {
     }
 
     @GetMapping("/room/{roomId}")
-    public ResponseEntity<Optional<DetailRoomResponse>> getRoomById(@PathVariable Long roomId) throws ResourceNotFoundException {
-        Optional<Room> theRoom = roomService.getRoomById(roomId);
-        return theRoom.map(room -> {
-            DetailRoomResponse detailRoomResponse = new DetailRoomResponse(room);
-            return ResponseEntity.ok(Optional.of(detailRoomResponse));
-        }).orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy phòng"));
+    public ResponseEntity<ApiResponseDTO<DetailRoomResponse>> getRoomById(@PathVariable Long roomId)
+            throws ResourceNotFoundException {
+        Room theRoom = roomService.getRoomById(roomId);
+        DetailRoomResponse detailRoomResponse = new DetailRoomResponse(theRoom);
+
+        DataResponseDTO<DetailRoomResponse> dataResponseDTO = new DataResponseDTO<>(null,
+                detailRoomResponse);
+        return ResponseEntity.ok(new ApiResponseDTO<>(true, "200", dataResponseDTO));
     }
 
     @GetMapping("/available-rooms")
@@ -143,6 +144,18 @@ public class RoomController {
 //            }
 //        }
         return ResponseEntity.ok(allRoomRespons);
+    }
+
+    @GetMapping("/available-day-in-month")
+    public ResponseEntity<ApiResponseDTO<List<String>>> getAvailableDayInMonth(@RequestParam Long roomId,
+                                                                                  @RequestParam int year,
+                                                                                  @RequestParam int month){
+        List<LocalDate> localDates = roomService.getAvailableDaysInMonth(roomId, year, month);
+        List<String> formattedDays = localDates.stream()
+                .map(date -> date.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
+                .collect(Collectors.toList());
+        DataResponseDTO<List<String>> dataResponseDTO = new DataResponseDTO<>(formattedDays.size(), formattedDays);
+        return ResponseEntity.ok(new ApiResponseDTO<>(true, "200", dataResponseDTO));
     }
 
     // Tạo đối tượng roomResponse dùng nhiều lần mỗi khi thao tác với đối tượng này

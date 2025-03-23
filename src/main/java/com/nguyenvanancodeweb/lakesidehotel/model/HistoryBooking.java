@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Entity
@@ -23,12 +24,12 @@ public class HistoryBooking {
 
     private LocalDate checkin;
     private LocalDate checkout;
-    private double price;
+    private BigDecimal price;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "room_id", referencedColumnName = "id")
     private Room room;
 
-    private int state;
+    private int status;
 
 }
