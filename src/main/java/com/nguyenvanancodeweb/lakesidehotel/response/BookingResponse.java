@@ -1,11 +1,12 @@
 package com.nguyenvanancodeweb.lakesidehotel.response;
 
+import com.nguyenvanancodeweb.lakesidehotel.response.room.AllRoomResponse;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 @Data
 @AllArgsConstructor
@@ -17,35 +18,19 @@ public class BookingResponse {
 
     private LocalDate checkOutDate;
 
-    private String guestFullName;
-
-    private String guestEmail;
-
-    private int NumOfAdults;
-
-    private String bookingConfirmationCode;
-
-    private String bookingTime;
-
     private int status;
 
-    private String accountBank;
+    private BigDecimal totalPrice;
 
-    private String nameUserBank;
+    private Long userId;
 
-    private String phoneNumber;
+    private Long roomId;
 
-    private String transactionCode;
-
-    private String bank;
-
-    private RoomResponse room;
+//    private AllRoomResponse room;
 
     public BookingResponse(Long bookingId, LocalDate checkInDate, LocalDate checkOutDate, String bookingConfirmationCode, String bookingTime) {
         this.bookingId = bookingId;
         this.checkInDate = checkInDate;
         this.checkOutDate = checkOutDate;
-        this.bookingConfirmationCode = bookingConfirmationCode;
-        this.bookingTime = bookingTime;
     }
 }

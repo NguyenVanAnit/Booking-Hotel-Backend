@@ -2,6 +2,8 @@ package com.nguyenvanancodeweb.lakesidehotel.service;
 
 import com.nguyenvanancodeweb.lakesidehotel.exception.ResourceNotFoundException;
 import com.nguyenvanancodeweb.lakesidehotel.model.Room;
+import com.nguyenvanancodeweb.lakesidehotel.response.room.AllRoomResponse;
+import org.springframework.data.domain.Page;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -12,19 +14,30 @@ import java.util.List;
 import java.util.Optional;
 
 public interface IRoomService {
-    Room addNewRoom(MultipartFile photo, String roomType, BigDecimal roomPrice) throws SQLException, IOException;
+    Room addNewRoom(String name, String description, String roomType, BigDecimal roomPrice, int floor,
+                    int maxNumberAdult, int maxNumberChildren, int maxNumberPeople, int ageLimit,
+                    int numberBed) throws SQLException, IOException;
 
     List<String> getAllRoomTypes();
 
-    List<Room> getAllRooms();
+    Page<AllRoomResponse> getAllRooms(int pageNumber, int pageSize);
 
     byte[] getRoomPhotoByRoomId(Long roomId) throws SQLException, ResourceNotFoundException;
 
     void deleteRoom(Long roomId);
 
-    Room updateRoom(Long roomId, String roomType, BigDecimal roomPrice, byte[] photoBytes) throws ResourceNotFoundException;
+    Room updateRoom(Long roomId, String name, String description, String roomType, BigDecimal roomPrice,
+                    int floor, int maxNumberAdult, int maxNumberChildren, int maxNumberPeople, int ageLimit,
+                    int numberBed ) throws ResourceNotFoundException;
 
-    Optional<Room> getRoomById(Long roomId);
+    Room getRoomById(Long roomId);
 
-    List<Room> getAvailableRooms(LocalDate checkInDate, LocalDate checkOutDate, String roomType);
+    Page<Room> getAvailableRooms(LocalDate checkInDate, LocalDate checkOutDate, int numberAdult, int numberChildren,
+                                 int pageNumber, int pageSize);
+
+    Boolean checkAvailableRoom(Long roomId, LocalDate checkInDate, LocalDate checkOutDate);
+
+    List<LocalDate> getAvailableDaysInMonth(Long roomId, int year, int month);
+
+    void validateRoomExists(Long roomId) throws ResourceNotFoundException;
 }

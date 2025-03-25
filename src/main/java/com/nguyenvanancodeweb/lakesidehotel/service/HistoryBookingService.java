@@ -1,0 +1,48 @@
+package com.nguyenvanancodeweb.lakesidehotel.service;
+
+import com.nguyenvanancodeweb.lakesidehotel.exception.InvalidPaginationException;
+import com.nguyenvanancodeweb.lakesidehotel.model.BookedRoom;
+import com.nguyenvanancodeweb.lakesidehotel.model.HistoryBooking;
+import com.nguyenvanancodeweb.lakesidehotel.repository.HistoryBookingRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.stereotype.Service;
+
+@Service
+@RequiredArgsConstructor
+public class HistoryBookingService implements IHistoryBookingService {
+    private final HistoryBookingRepository historyBookingRepository;
+
+    @Override
+    public HistoryBooking addHistoryBooking(BookedRoom bookedRoom) {
+        HistoryBooking historyBooking = new HistoryBooking();
+        historyBooking.setCheckin(bookedRoom.getCheckInDate());
+        historyBooking.setCheckout(bookedRoom.getCheckOutDate());
+        historyBooking.setStatus(bookedRoom.getStatus());
+        historyBooking.setPrice(bookedRoom.getTotalPrice());
+        historyBooking.setUser(bookedRoom.getUser());
+        historyBooking.setRoom(bookedRoom.getRoom());
+        return historyBookingRepository.save(historyBooking);
+    }
+
+    @Override
+    public Page<HistoryBooking> getHistoryBooking(int pageNumber, int pageSize, Long userId, Long roomId) {
+        if(pageNumber < 0 || pageSize < 1){
+            throw new InvalidPaginationException("Số trang hoặc kích thước trang không hợp lệ!");
+        }
+
+        Pageable pageable = PageRequest.of(pageNumber, pageSize, Sort.by("checkin").descending());
+        if(userId != null) {
+            return historyBookingRepository.findByUserId(userId, pageable);
+        }
+        if(roomId != null) {
+            return historyBookingRepository.findByRoomId(roomId, pageable);
+        }
+        return historyBookingRepository.findAll(pageable);
+    }
+
+
+}

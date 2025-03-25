@@ -1,13 +1,14 @@
 package com.nguyenvanancodeweb.lakesidehotel.service;
 
 import com.nguyenvanancodeweb.lakesidehotel.model.BookedRoom;
+import com.nguyenvanancodeweb.lakesidehotel.request.BookingRequest;
 
 import java.util.List;
 
 public interface IBookingService {
     void cancelBooking(Long bookingId);
 
-    String saveBooking(Long roomId, BookedRoom bookingRequest);
+    String saveBooking(Long roomId, BookingRequest bookingRequest);
 
     BookedRoom findByBookingConfirmationCode(String confirmationCode);
 
@@ -18,4 +19,8 @@ public interface IBookingService {
     void acceptBooking(Long bookingId);
 
     void rejectBooking(Long bookingId);
+
+    BookedRoom getBookedRoomById(Long bookingId);
+
+    void updateBookingStatus(Long bookingId, int status);
 }

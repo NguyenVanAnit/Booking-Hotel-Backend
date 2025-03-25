@@ -5,21 +5,22 @@ import com.nguyenvanancodeweb.lakesidehotel.exception.ResourceNotFoundException;
 import com.nguyenvanancodeweb.lakesidehotel.model.BookedRoom;
 import com.nguyenvanancodeweb.lakesidehotel.model.Room;
 import com.nguyenvanancodeweb.lakesidehotel.response.BookingResponse;
-import com.nguyenvanancodeweb.lakesidehotel.response.RoomResponse;
-import com.nguyenvanancodeweb.lakesidehotel.service.BookingService;
+import com.nguyenvanancodeweb.lakesidehotel.response.DTO.ApiResponseDTO;
+import com.nguyenvanancodeweb.lakesidehotel.response.DTO.DataResponseDTO;
+import com.nguyenvanancodeweb.lakesidehotel.response.room.AllRoomResponse;
 import com.nguyenvanancodeweb.lakesidehotel.service.IBookingService;
 import com.nguyenvanancodeweb.lakesidehotel.service.IRoomService;
+import com.nguyenvanancodeweb.lakesidehotel.service.VNPAYService;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.InputStream;
-import java.sql.Blob;
+import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Base64;
 import java.util.List;
+import java.util.Map;
 
 
 @RequiredArgsConstructor
@@ -29,6 +30,7 @@ import java.util.List;
 public class BookingController {
     private final IBookingService bookingService;
     private final IRoomService roomService;
+    private final VNPAYService vnpayService;
 
     @GetMapping("/confirmation/{confirmationCode}")
     public ResponseEntity<?> getBookingByConfirmationCode(@PathVariable String confirmationCode) {
@@ -53,13 +55,38 @@ public class BookingController {
     }
 
     @PostMapping("/room/{roomId}/booking")
-    public ResponseEntity<?> saveBooking(@PathVariable Long roomId, @RequestBody BookedRoom bookingRequest) {
+    public String saveBooking(@PathVariable Long roomId, @RequestBody BookedRoom bookingRequest,
+                              HttpServletRequest request) {
         try{
-            String confirmationCode = bookingService.saveBooking(roomId, bookingRequest);
-            return ResponseEntity.ok("Mã đặt phòng của bạn là: "+confirmationCode);
+//            String confirmationCode = bookingService.saveBooking(roomId, bookingRequest);
+            bookingService.saveBooking(roomId, bookingRequest);
+            BigDecimal totalPrice = bookingRequest.getTotalPrice();
+            String baseUrl = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort();
+            String vnpayUrl = vnpayService.createOrder(request, totalPrice.intValue(),
+                    bookingRequest.getBookingId().toString(), baseUrl);
+//            String paymentUrl = vnpayService.createPaymentUrl(bookingRequest.getBookingId(), totalPrice.doubleValue());
+//            DataResponseDTO<String> dataResponseDTO = new DataResponseDTO<>(null, paymentUrl);
+            return "redirect:" + vnpayUrl;
         }catch (InvalidBookingRequestException e){
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return e.getMessage();
         }
+    }
+
+    @GetMapping("/vnpay-payment-return")
+    public String paymentCompleted(HttpServletRequest request){
+        int paymentStatus = vnpayService.orderReturn(request);
+
+        String orderInfo = request.getParameter("vnp_OrderInfo");
+        String paymentTime = request.getParameter("vnp_PayDate");
+        String transactionId = request.getParameter("vnp_TransactionNo");
+        String totalPrice = request.getParameter("vnp_Amount");
+
+//        model.addAttribute("orderId", orderInfo);
+//        model.addAttribute("totalPrice", totalPrice);
+//        model.addAttribute("paymentTime", paymentTime);
+//        model.addAttribute("transactionId", transactionId);
+
+        return paymentStatus == 1 ? "ordersuccess" : "orderfail";
     }
 
     @DeleteMapping("/booking/{bookingId}/delete")
@@ -98,20 +125,16 @@ public class BookingController {
         }
     }
 
-    private BookingResponse getBookingResponse(BookedRoom booking) {
-        Room theRoom = roomService.getRoomById(booking.getRoom().getId()).get();
-        RoomResponse room = new RoomResponse(
-                theRoom.getId(),
-                theRoom.getRoomType(),
-                theRoom.getRoomPrice());
+//    @GetMapping("/history-booking")
+//    public ResponseEntity<Page<BookingResponse>> getBookingsHistory() {
+//
+//    }
 
-        return new BookingResponse(booking.getBookingId(), booking.getCheckInDate(),
-                booking.getCheckOutDate(), booking.getGuestFullName(),
-                booking.getGuestEmail(), booking.getNumOfAdults(),
-                booking.getBookingConfirmationCode(), booking.getBookingTime(),
-                booking.getStatus(), booking.getAccountBank(),
-                booking.getNameUserBank(), booking.getPhoneNumber(),
-                booking.getTransactionCode(), booking.getBank(),
-                room);
+    private BookingResponse getBookingResponse(BookedRoom booking) {
+        Room theRoom = roomService.getRoomById(booking.getRoom().getId());
+        AllRoomResponse room = new AllRoomResponse(theRoom);
+
+        return new BookingResponse(booking.getBookingId(), booking.getCheckInDate(), booking.getCheckOutDate(),
+                booking.getStatus(), booking.getTotalPrice(), booking.getUser().getId(), booking.getRoom().getId());
     }
 }
