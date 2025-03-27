@@ -28,5 +28,5 @@ public class Rate {
 
     private double score;
     private String comment;
-    private LocalDateTime createdAt = LocalDateTime.now();
+    private LocalDateTime createdAt;
 }

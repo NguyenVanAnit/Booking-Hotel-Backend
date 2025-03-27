@@ -3,6 +3,7 @@ package com.nguyenvanancodeweb.lakesidehotel.service;
 import com.nguyenvanancodeweb.lakesidehotel.exception.InvalidPaginationException;
 import com.nguyenvanancodeweb.lakesidehotel.model.BookedRoom;
 import com.nguyenvanancodeweb.lakesidehotel.model.HistoryBooking;
+import com.nguyenvanancodeweb.lakesidehotel.model.User;
 import com.nguyenvanancodeweb.lakesidehotel.repository.HistoryBookingRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -15,15 +16,18 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class HistoryBookingService implements IHistoryBookingService {
     private final HistoryBookingRepository historyBookingRepository;
+    private final IUserService userService;
 
     @Override
     public HistoryBooking addHistoryBooking(BookedRoom bookedRoom) {
+        User user = userService.getUserByUserId(bookedRoom.getUserId());
+
         HistoryBooking historyBooking = new HistoryBooking();
         historyBooking.setCheckin(bookedRoom.getCheckInDate());
         historyBooking.setCheckout(bookedRoom.getCheckOutDate());
         historyBooking.setStatus(bookedRoom.getStatus());
         historyBooking.setPrice(bookedRoom.getTotalPrice());
-        historyBooking.setUser(bookedRoom.getUser());
+        historyBooking.setUser(user);
         historyBooking.setRoom(bookedRoom.getRoom());
         return historyBookingRepository.save(historyBooking);
     }
