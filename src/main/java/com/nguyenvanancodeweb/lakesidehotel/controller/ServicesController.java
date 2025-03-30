@@ -47,12 +47,12 @@ public class ServicesController {
         return ResponseEntity.ok(new ApiResponseDTO<>(true, "Xoá phòng thành công!"));
     }
 
-        @GetMapping("/by-room/{roomId}")
-        public ResponseEntity<ApiResponseDTO<List<ServicesResponse>>> getServicesByRoom(@PathVariable Long roomId) {
-            List<ServicesResponse> servicesResponses = servicesService.getListOfServicesByRoomId(roomId);
+    @GetMapping("/by-room/{roomId}")
+    public ResponseEntity<ApiResponseDTO<List<ServicesResponse>>> getServicesByRoom(@PathVariable Long roomId) {
+        List<ServicesResponse> servicesResponses = servicesService.getListOfServicesByRoomId(roomId);
 
-            DataResponseDTO<List<ServicesResponse>> dataResponseDTO = new DataResponseDTO<>(servicesResponses.size(),
-                    servicesResponses);
-            return ResponseEntity.ok(new ApiResponseDTO<>(true, "200", dataResponseDTO));
-        }
+        DataResponseDTO<List<ServicesResponse>> dataResponseDTO = new DataResponseDTO<>(servicesResponses.size(),
+                servicesResponses);
+        return ResponseEntity.ok(new ApiResponseDTO<>(true, "200", dataResponseDTO));
+    }
 }
