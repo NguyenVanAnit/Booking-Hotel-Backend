@@ -67,6 +67,13 @@ public class ServicesService implements IServicesService {
         return services.stream().map(ServicesResponse::new).toList();
     }
 
+    @Override
+    public Services getServicesById(Long id) {
+        return servicesRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy dịch vụ phòng"));
+    }
+
+
     //Dùng để tránh lặp code giữa phần add và update
     private Services saveServices(ServicesRequest servicesRequest, Services service) {
         service.setName(servicesRequest.getName());

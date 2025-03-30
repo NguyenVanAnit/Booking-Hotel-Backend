@@ -6,10 +6,13 @@ import com.nguyenvanancodeweb.lakesidehotel.model.BookedRoom;
 import com.nguyenvanancodeweb.lakesidehotel.model.Room;
 import com.nguyenvanancodeweb.lakesidehotel.repository.BookingRepository;
 import com.nguyenvanancodeweb.lakesidehotel.request.BookingRequest;
+import com.nguyenvanancodeweb.lakesidehotel.request.ServiceBookedRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Optional;
 
@@ -41,7 +44,7 @@ public class BookingService implements IBookingService {
     }
 
     @Override
-    public String saveBooking(Long roomId, BookingRequest bookingRequest) {
+    public BookedRoom saveBooking(Long roomId, BookingRequest bookingRequest) {
         if(bookingRequest.getCheckOutDate().isBefore(bookingRequest.getCheckInDate())) {
             throw new InvalidBookingRequestException("Ngày nhận phòng phải trước ngày trả phòng");
         }
@@ -57,19 +60,29 @@ public class BookingService implements IBookingService {
             bookedRoom.setNumOfAdults(bookingRequest.getNumOfAdults());
             bookedRoom.setNumOfChildren(bookingRequest.getNumOfChildren());
             bookedRoom.setPhoneNumber(bookingRequest.getPhoneNumber());
-            bookedRoom.setTotalPrice(bookingRequest.getTotalPrice());
             bookedRoom.setUserId(bookingRequest.getUserId());
             bookedRoom.setRoom(room);
             bookedRoom.setStatus(0);
             bookedRoom.setBookingTime(String.valueOf(LocalDate.now()));
 
-            serviceBookedService.savingServiceForBooking(bookedRoom);
+            //tinh so ngay tu checkin den checkout
+            long daysStayed = ChronoUnit.DAYS.between(bookingRequest.getCheckInDate(), bookingRequest.getCheckOutDate());
+
+            // Tính giá tiền thuê phòng
+            BigDecimal roomPricePerDay = room.getRoomPrice(); // Giả sử Room có phương thức getPrice()
+            BigDecimal totalRoomPrice = roomPricePerDay.multiply(BigDecimal.valueOf(daysStayed));
+
+            List<ServiceBookedRequest> serviceBookedRequests = bookingRequest.getServiceBookedRequests();
+            BigDecimal totalPriceService = serviceBookedService.savingServiceForBooking(bookedRoom, serviceBookedRequests);
+
+            //luu gia tri tong tien vua tinh vao don dat phong
+            bookedRoom.setTotalPrice(totalRoomPrice.add(totalPriceService));
 
             bookingRepository.save(bookedRoom);
             room.addBooking(bookedRoom);
             historyBookingService.addHistoryBooking(bookedRoom);
 
-            return bookedRoom.getBookingConfirmationCode();
+            return bookedRoom;
         }else {
             throw new InvalidBookingRequestException("Xin lỗi, căn phòng không trống vào ngày được chọn");
         }

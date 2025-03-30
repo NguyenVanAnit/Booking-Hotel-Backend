@@ -18,4 +18,6 @@ public interface IServicesService {
     void deleteService(Long id);
 
     List<ServicesResponse> getListOfServicesByRoomId(Long roomId);
+
+    Services getServicesById(Long id);
 }

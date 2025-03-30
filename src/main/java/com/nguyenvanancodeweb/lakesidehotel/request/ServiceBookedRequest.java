@@ -10,5 +10,5 @@ import java.math.BigDecimal;
 public class ServiceBookedRequest {
     private Long serviceId;
     private int quantity;
-    private BigDecimal totalPrice;
+//    private BigDecimal totalPrice;
 }
