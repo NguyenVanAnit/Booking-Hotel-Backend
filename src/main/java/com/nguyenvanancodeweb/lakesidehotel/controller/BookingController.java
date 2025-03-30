@@ -4,6 +4,8 @@ import com.nguyenvanancodeweb.lakesidehotel.exception.InvalidBookingRequestExcep
 import com.nguyenvanancodeweb.lakesidehotel.exception.ResourceNotFoundException;
 import com.nguyenvanancodeweb.lakesidehotel.model.BookedRoom;
 import com.nguyenvanancodeweb.lakesidehotel.model.Room;
+import com.nguyenvanancodeweb.lakesidehotel.model.User;
+import com.nguyenvanancodeweb.lakesidehotel.request.BookingRequest;
 import com.nguyenvanancodeweb.lakesidehotel.response.BookingResponse;
 import com.nguyenvanancodeweb.lakesidehotel.response.DTO.ApiResponseDTO;
 import com.nguyenvanancodeweb.lakesidehotel.response.DTO.DataResponseDTO;
@@ -55,15 +57,15 @@ public class BookingController {
     }
 
     @PostMapping("/room/{roomId}/booking")
-    public String saveBooking(@PathVariable Long roomId, @RequestBody BookedRoom bookingRequest,
+    public String saveBooking(@PathVariable Long roomId, @RequestBody BookingRequest bookingRequest,
                               HttpServletRequest request) {
         try{
 //            String confirmationCode = bookingService.saveBooking(roomId, bookingRequest);
-            bookingService.saveBooking(roomId, bookingRequest);
-            BigDecimal totalPrice = bookingRequest.getTotalPrice();
+            BookedRoom booking = bookingService.saveBooking(roomId, bookingRequest);
+            BigDecimal totalPrice = booking.getTotalPrice();
             String baseUrl = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort();
             String vnpayUrl = vnpayService.createOrder(request, totalPrice.intValue(),
-                    bookingRequest.getBookingId().toString(), baseUrl);
+                    booking.getBookingId().toString(), baseUrl);
 //            String paymentUrl = vnpayService.createPaymentUrl(bookingRequest.getBookingId(), totalPrice.doubleValue());
 //            DataResponseDTO<String> dataResponseDTO = new DataResponseDTO<>(null, paymentUrl);
             return "redirect:" + vnpayUrl;
@@ -135,6 +137,6 @@ public class BookingController {
         AllRoomResponse room = new AllRoomResponse(theRoom);
 
         return new BookingResponse(booking.getBookingId(), booking.getCheckInDate(), booking.getCheckOutDate(),
-                booking.getStatus(), booking.getTotalPrice(), booking.getUser().getId(), booking.getRoom().getId());
+                booking.getStatus(), booking.getTotalPrice(), booking.getUserId(), booking.getRoom().getId());
     }
 }
