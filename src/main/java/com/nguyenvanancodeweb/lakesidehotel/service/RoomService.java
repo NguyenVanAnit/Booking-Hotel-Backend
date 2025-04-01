@@ -7,6 +7,7 @@ import com.nguyenvanancodeweb.lakesidehotel.exception.InvalidPaginationException
 import com.nguyenvanancodeweb.lakesidehotel.exception.ResourceNotFoundException;
 import com.nguyenvanancodeweb.lakesidehotel.model.BookedRoom;
 import com.nguyenvanancodeweb.lakesidehotel.model.Room;
+import com.nguyenvanancodeweb.lakesidehotel.model.Services;
 import com.nguyenvanancodeweb.lakesidehotel.repository.RoomRepository;
 import com.nguyenvanancodeweb.lakesidehotel.response.room.AllRoomResponse;
 import lombok.RequiredArgsConstructor;
@@ -35,6 +36,7 @@ import java.util.stream.IntStream;
 @RequiredArgsConstructor
 public class RoomService implements IRoomService {
     private final RoomRepository roomRepository;
+    private final IServicesService servicesService;
 
     @Override
     public Room addNewRoom(String name, String description, String roomType, BigDecimal roomPrice, int floor,
@@ -170,6 +172,15 @@ public class RoomService implements IRoomService {
         if (!roomRepository.existsById(roomId)) {
             throw new ResourceNotFoundException("Không tồn tại phòng ID " + roomId);
         };
+    }
+
+    @Override
+    public void addServiceToRoom(Long roomId, List<Long> servicesList) {
+        Room room = getRoomById(roomId);
+        List<Services> services = servicesService.getServicesList(servicesList);
+
+        room.getServices().addAll(services);
+        roomRepository.save(room);
     }
 
     @Override

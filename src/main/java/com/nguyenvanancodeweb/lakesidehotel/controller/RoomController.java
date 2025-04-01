@@ -158,6 +158,13 @@ public class RoomController {
         return ResponseEntity.ok(new ApiResponseDTO<>(true, "200", dataResponseDTO));
     }
 
+    @PostMapping("/{roomId}/add-servicesList")
+    private ResponseEntity<ApiResponseDTO<Void>> addServicesListOfRoom(@PathVariable Long roomId,
+                                                                       @RequestBody List<Long> servicesId){
+        roomService.addServiceToRoom(roomId, servicesId);
+        return ResponseEntity.ok(new ApiResponseDTO<>(true, "Thêm dịch vụ vào phòng thành công"));
+    }
+
     // Tạo đối tượng roomResponse dùng nhiều lần mỗi khi thao tác với đối tượng này
     private AllRoomResponse getRoomResponse(Room room) {
         List<BookedRoom> bookings = getAllBookingsByRoomId(room.getId());
@@ -182,6 +189,5 @@ public class RoomController {
     private List<BookedRoom> getAllBookingsByRoomId(Long roomId) {
         return bookingService.getAllRoomsByRoomId(roomId);
     }
-
 
 }

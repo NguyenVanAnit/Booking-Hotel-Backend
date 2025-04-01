@@ -20,4 +20,6 @@ public interface IServicesService {
     List<ServicesResponse> getListOfServicesByRoomId(Long roomId);
 
     Services getServicesById(Long id);
+
+    List<Services> getServicesList(List<Long> servicesIds);
 }

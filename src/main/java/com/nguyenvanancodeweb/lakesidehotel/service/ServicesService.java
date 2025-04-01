@@ -73,6 +73,11 @@ public class ServicesService implements IServicesService {
                 .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy dịch vụ phòng"));
     }
 
+    @Override
+    public List<Services> getServicesList(List<Long> servicesIds) {
+        return servicesRepository.findAllById(servicesIds);
+    }
+
 
     //Dùng để tránh lặp code giữa phần add và update
     private Services saveServices(ServicesRequest servicesRequest, Services service) {

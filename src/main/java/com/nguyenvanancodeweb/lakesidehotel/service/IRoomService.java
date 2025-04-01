@@ -40,4 +40,6 @@ public interface IRoomService {
     List<LocalDate> getAvailableDaysInMonth(Long roomId, int year, int month);
 
     void validateRoomExists(Long roomId) throws ResourceNotFoundException;
+
+    void addServiceToRoom(Long roomId, List<Long> servicesList);
 }
