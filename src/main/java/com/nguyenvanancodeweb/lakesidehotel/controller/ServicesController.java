@@ -55,4 +55,12 @@ public class ServicesController {
                 servicesResponses);
         return ResponseEntity.ok(new ApiResponseDTO<>(true, "200", dataResponseDTO));
     }
+
+    @PostMapping("/add-services/{roomId}")
+    public ResponseEntity<ApiResponseDTO<Void>> addServiceToRoom(@PathVariable Long roomId,
+                                                                 @Valid @RequestBody List<Long> serviceIds) {
+        servicesService.addServicesListToRoom(roomId, serviceIds);
+        return ResponseEntity.ok(new ApiResponseDTO<>(true, "Thêm thành công dịch vụ vào phòng"));
+    }
+
 }

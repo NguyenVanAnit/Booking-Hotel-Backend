@@ -36,7 +36,6 @@ import java.util.stream.IntStream;
 @RequiredArgsConstructor
 public class RoomService implements IRoomService {
     private final RoomRepository roomRepository;
-    private final IServicesService servicesService;
 
     @Override
     public Room addNewRoom(String name, String description, String roomType, BigDecimal roomPrice, int floor,
@@ -175,10 +174,8 @@ public class RoomService implements IRoomService {
     }
 
     @Override
-    public void addServiceToRoom(Long roomId, List<Long> servicesList) {
+    public void addServiceToRoom(Long roomId, List<Services> services) {
         Room room = getRoomById(roomId);
-        List<Services> services = servicesService.getServicesList(servicesList);
-
         room.getServices().addAll(services);
         roomRepository.save(room);
     }

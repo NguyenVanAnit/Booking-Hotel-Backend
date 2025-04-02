@@ -21,5 +21,5 @@ public interface IServicesService {
 
     Services getServicesById(Long id);
 
-    List<Services> getServicesList(List<Long> servicesIds);
+    void addServicesListToRoom(Long roomId, List<Long> servicesIds);
 }

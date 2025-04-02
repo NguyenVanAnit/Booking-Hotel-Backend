@@ -74,8 +74,9 @@ public class ServicesService implements IServicesService {
     }
 
     @Override
-    public List<Services> getServicesList(List<Long> servicesIds) {
-        return servicesRepository.findAllById(servicesIds);
+    public void addServicesListToRoom(Long roomId, List<Long> servicesIds) {
+        List<Services> services = servicesRepository.findAllById(servicesIds);
+        roomService.addServiceToRoom(roomId, services);
     }
 
 

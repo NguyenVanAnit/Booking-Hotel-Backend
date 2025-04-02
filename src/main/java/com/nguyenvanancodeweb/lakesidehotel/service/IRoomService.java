@@ -2,6 +2,7 @@ package com.nguyenvanancodeweb.lakesidehotel.service;
 
 import com.nguyenvanancodeweb.lakesidehotel.exception.ResourceNotFoundException;
 import com.nguyenvanancodeweb.lakesidehotel.model.Room;
+import com.nguyenvanancodeweb.lakesidehotel.model.Services;
 import com.nguyenvanancodeweb.lakesidehotel.response.room.AllRoomResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.web.multipart.MultipartFile;
@@ -41,5 +42,5 @@ public interface IRoomService {
 
     void validateRoomExists(Long roomId) throws ResourceNotFoundException;
 
-    void addServiceToRoom(Long roomId, List<Long> servicesList);
+    void addServiceToRoom(Long roomId, List<Services> services);
 }
