@@ -45,4 +45,11 @@ public class RateService implements IRateService {
         Page<Rate> rates = rateRepository.findRateByRoomId(roomId, pageable);
         return rates;
     }
+
+    @Override
+    public void deleteRate(Long id) {
+        rateRepository.deleteById(id);
+    }
+
+
 }

@@ -33,6 +33,7 @@ public class Room {
     private int maxNumberPeople;
     private int ageLimit;
     private int numberBed;
+    private Double totalRating;
 
     @Lob
     private Blob photo1;

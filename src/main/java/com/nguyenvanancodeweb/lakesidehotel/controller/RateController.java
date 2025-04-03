@@ -35,4 +35,10 @@ public class RateController {
         return ResponseEntity.ok(new ApiResponseDTO<List<Rate>>(true, "200", dataResponseDTO));
     }
 
+    @DeleteMapping("/delete-rate")
+    public ResponseEntity<ApiResponseDTO<Void>> deleteRate(@RequestParam Long rateId){
+        rateService.deleteRate(rateId);
+        return ResponseEntity.ok(new ApiResponseDTO<>(true, "Xoá phòng thành công"));
+    }
+
 }

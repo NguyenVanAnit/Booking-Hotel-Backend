@@ -8,4 +8,6 @@ public interface IRateService {
     void addRate(RateRequest rateRequest);
 
     Page<Rate> getRateListByRoomId(int pageNumber, int pageSize, Long roomId);
+
+    void deleteRate(Long id);
 }
