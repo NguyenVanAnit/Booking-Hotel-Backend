@@ -18,7 +18,7 @@ public class ServicesRequest {
     private String description;
 
     @NotNull(message = "Trạng thái hoạt động không được để trống")
-    private boolean isActive;
+    private Boolean isActive;
 
     @NotNull(message = "Giá dịch vụ không được để trống")
     private BigDecimal priceService;
@@ -27,7 +27,7 @@ public class ServicesRequest {
     private String serviceType;
 
     @NotNull(message = "Trạng thái miễn phí không được để trống")
-    private boolean isFree;
+    private Boolean isFree;
 
     @NotNull(message = "Số lượng tối đa không được để trống")
     private int maxQuantity;

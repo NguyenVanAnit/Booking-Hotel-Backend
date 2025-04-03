@@ -24,10 +24,10 @@ public class ServicesResponse {
         this.id = services.getId();
         this.name = services.getName();
         this.description = services.getDescription();
-        this.isActive = services.isActive();
+        this.isActive = services.getIsActive();
         this.priceService = services.getPriceService();
         this.serviceType = services.getServiceType();
-        this.isFree = services.isFree();
+        this.isFree = services.getIsFree();
         this.maxQuantity = services.getMaxQuantity();
     }
 }

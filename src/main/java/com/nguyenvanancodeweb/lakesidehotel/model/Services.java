@@ -23,10 +23,10 @@ public class Services {
 
     private String name;
     private String description;
-    private boolean isActive;
+    private Boolean isActive;
     private BigDecimal priceService;
     private String serviceType;
-    private boolean isFree;
+    private Boolean isFree;
     private int maxQuantity;
 
     @OneToMany(mappedBy = "services", fetch = FetchType.LAZY, cascade = CascadeType.ALL)

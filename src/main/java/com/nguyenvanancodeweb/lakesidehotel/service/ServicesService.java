@@ -84,10 +84,10 @@ public class ServicesService implements IServicesService {
     private Services saveServices(ServicesRequest servicesRequest, Services service) {
         service.setName(servicesRequest.getName());
         service.setDescription(servicesRequest.getDescription());
-        service.setActive(servicesRequest.isActive());
+        service.setIsActive(servicesRequest.getIsActive());
         service.setPriceService(servicesRequest.getPriceService());
         service.setServiceType(servicesRequest.getServiceType());
-        service.setFree(servicesRequest.isFree());
+        service.setIsFree(servicesRequest.getIsFree());
         service.setMaxQuantity(servicesRequest.getMaxQuantity());
 
         return servicesRepository.save(service);
