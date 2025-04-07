@@ -14,11 +14,13 @@ import com.nguyenvanancodeweb.lakesidehotel.service.IBookingService;
 import com.nguyenvanancodeweb.lakesidehotel.service.IRoomService;
 import com.nguyenvanancodeweb.lakesidehotel.service.VNPAYService;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -75,21 +77,41 @@ public class BookingController {
     }
 
     @GetMapping("/vnpay-payment-return")
-    public String paymentCompleted(HttpServletRequest request){
-        int paymentStatus = vnpayService.orderReturn(request);
+    public void vnpayReturn(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        int result = vnpayService.orderReturn(request);
 
-        String orderInfo = request.getParameter("vnp_OrderInfo");
-        String paymentTime = request.getParameter("vnp_PayDate");
-        String transactionId = request.getParameter("vnp_TransactionNo");
-        String totalPrice = request.getParameter("vnp_Amount");
+        String redirectUrl;
+        if (result == 1) {
+            // Thành công
+            redirectUrl = "http://localhost:3000/payment-result?status=success";
+        } else if (result == 0) {
+            // Thanh toán thất bại
+            redirectUrl = "http://localhost:3000/payment-result?status=fail";
+        } else {
+            // Sai checksum
+            redirectUrl = "http://localhost:3000/payment-result?status=invalid";
+        }
 
-//        model.addAttribute("orderId", orderInfo);
-//        model.addAttribute("totalPrice", totalPrice);
-//        model.addAttribute("paymentTime", paymentTime);
-//        model.addAttribute("transactionId", transactionId);
-
-        return paymentStatus == 1 ? "ordersuccess" : "orderfail";
+        response.sendRedirect(redirectUrl);
     }
+
+
+//    @GetMapping("/vnpay-payment-return")
+//    public String paymentCompleted(HttpServletRequest request){
+//        int paymentStatus = vnpayService.orderReturn(request);
+//
+//        String orderInfo = request.getParameter("vnp_OrderInfo");
+//        String paymentTime = request.getParameter("vnp_PayDate");
+//        String transactionId = request.getParameter("vnp_TransactionNo");
+//        String totalPrice = request.getParameter("vnp_Amount");
+//
+////        model.addAttribute("orderId", orderInfo);
+////        model.addAttribute("totalPrice", totalPrice);
+////        model.addAttribute("paymentTime", paymentTime);
+////        model.addAttribute("transactionId", transactionId);
+//
+//        return paymentStatus == 1 ? "ordersuccess" : "orderfail";
+//    }
 
     @DeleteMapping("/booking/{bookingId}/delete")
     public void cancelBooking (@PathVariable Long bookingId) {

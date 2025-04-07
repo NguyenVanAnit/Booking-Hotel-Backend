@@ -56,7 +56,10 @@ public class Room {
     @OneToMany(mappedBy = "room", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Rate> rates = new ArrayList<>();
 
-    @ManyToMany(mappedBy = "rooms")
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(name = "room_service",
+            joinColumns = @JoinColumn(name = "room_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "service_id", referencedColumnName = "id"))
     private Collection<Services> services = new HashSet<>();
 
     public Room(){

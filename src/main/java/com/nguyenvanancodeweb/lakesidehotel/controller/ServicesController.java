@@ -63,4 +63,11 @@ public class ServicesController {
         return ResponseEntity.ok(new ApiResponseDTO<>(true, "Thêm thành công dịch vụ vào phòng"));
     }
 
+    @DeleteMapping("/rooms/{roomId}/services/{serviceId}")
+    public ResponseEntity<ApiResponseDTO<Void>> removeServiceFromRoom(@PathVariable Long roomId,
+                                                                      @PathVariable Long serviceId) {
+        servicesService.removeServicesFromRoom(roomId, serviceId);
+        return ResponseEntity.ok(new ApiResponseDTO<>(true, "Xóa dịch vụ khỏi phòng thành công"));
+    }
+
 }

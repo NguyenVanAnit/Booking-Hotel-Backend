@@ -43,4 +43,6 @@ public interface IRoomService {
     void validateRoomExists(Long roomId) throws ResourceNotFoundException;
 
     void addServiceToRoom(Long roomId, List<Services> services);
+
+    void removeServiceFromRoom(Long roomId, Services services);
 }

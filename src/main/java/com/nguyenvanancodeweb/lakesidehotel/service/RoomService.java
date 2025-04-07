@@ -181,6 +181,13 @@ public class RoomService implements IRoomService {
     }
 
     @Override
+    public void removeServiceFromRoom(Long roomId, Services services) {
+        Room room = getRoomById(roomId);
+        room.getServices().remove(services);
+        roomRepository.save(room);
+    }
+
+    @Override
     public byte[] getRoomPhotoByRoomId(Long roomId) throws SQLException, ResourceNotFoundException {
         //Optional: cách an toàn để xử lý dữ liệu có thể null
         // Nếu null trả về Optional.empty(), nếu k null thì trả về đối tượng Room

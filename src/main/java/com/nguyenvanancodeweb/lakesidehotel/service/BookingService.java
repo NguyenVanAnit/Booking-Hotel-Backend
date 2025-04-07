@@ -73,6 +73,7 @@ public class BookingService implements IBookingService {
             BigDecimal totalRoomPrice = roomPricePerDay.multiply(BigDecimal.valueOf(daysStayed));
 
             List<ServiceBookedRequest> serviceBookedRequests = bookingRequest.getServiceBookedRequests();
+            bookingRepository.save(bookedRoom);
             BigDecimal totalPriceService = serviceBookedService.savingServiceForBooking(bookedRoom, serviceBookedRequests);
 
             //luu gia tri tong tien vua tinh vao don dat phong

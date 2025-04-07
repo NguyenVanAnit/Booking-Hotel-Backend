@@ -79,6 +79,12 @@ public class ServicesService implements IServicesService {
         roomService.addServiceToRoom(roomId, services);
     }
 
+    @Override
+    public void removeServicesFromRoom(Long roomId, Long servicesIds) {
+        Services services = getServicesById(servicesIds);
+        roomService.removeServiceFromRoom(roomId, services);
+    }
+
 
     //Dùng để tránh lặp code giữa phần add và update
     private Services saveServices(ServicesRequest servicesRequest, Services service) {

@@ -44,7 +44,7 @@ public class BookedRoom {
     private String bookingTime;
 
 //    0 - Chờ thanh toán, 1 - Đã thanh toán, 2 - Không thành công, 3 - Đã hủy
-    @Column(name = "status", nullable = false)
+//    @Column(name = "status", nullable = false)
     private int status = 0;
 
     @Column(name = "phone_number")

@@ -21,6 +21,7 @@ public class AllRoomResponse {
     private BigDecimal roomPrice;
     private String name;
     private String description;
+    private Double totalRating;
 
     public AllRoomResponse(Room room) {
         this.id = room.getId();
@@ -28,6 +29,7 @@ public class AllRoomResponse {
         this.description = room.getDescription();
         this.roomType = room.getRoomType();
         this.roomPrice = room.getRoomPrice();
+        this.totalRating = room.getTotalRating();
 //        this.photo1
     }
 

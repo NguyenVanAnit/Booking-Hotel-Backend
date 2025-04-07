@@ -32,10 +32,7 @@ public class Services {
     @OneToMany(mappedBy = "services", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<ServiceBooked> serviceBookeds;
 
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "room_service",
-            joinColumns = @JoinColumn(name = "service_id", referencedColumnName = "id"),
-            inverseJoinColumns = @JoinColumn(name = "room_id", referencedColumnName = "id"))
+    @ManyToMany(mappedBy = "services")
     private Collection<Room> rooms = new HashSet<>();
 
 }
