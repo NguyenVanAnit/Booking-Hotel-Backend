@@ -21,12 +21,14 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.sql.rowset.serial.SerialBlob;
 import java.io.IOException;
+import java.io.InputStream;
 import java.math.BigDecimal;
 import java.sql.Blob;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.YearMonth;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -40,7 +42,8 @@ public class RoomService implements IRoomService {
     @Override
     public Room addNewRoom(String name, String description, String roomType, BigDecimal roomPrice, int floor,
                            int maxNumberAdult, int maxNumberChildren, int maxNumberPeople, int ageLimit,
-                           int numberBed) throws SQLException, IOException {
+                           int numberBed, String photo1, String photo2, String photo3, String photo4,
+                            String photo5) throws SQLException, IOException {
         if (floor < 1) {
             throw new IllegalArgumentException("Số tầng không hợp lệ");
         }
@@ -55,6 +58,11 @@ public class RoomService implements IRoomService {
         room.setMaxNumberPeople(maxNumberPeople);
         room.setAgeLimit(ageLimit);
         room.setNumberBed(numberBed);
+        room.setPhoto1(base64ToBlob(photo1));
+        room.setPhoto2(base64ToBlob(photo2));
+        room.setPhoto3(base64ToBlob(photo3));
+        room.setPhoto4(base64ToBlob(photo4));
+        room.setPhoto5(base64ToBlob(photo5));
 //        if (!file.isEmpty()){
 //            byte[] photoBytes = file.getBytes();
 //            Blob photoBlob = new SerialBlob(photoBytes);
@@ -91,7 +99,8 @@ public class RoomService implements IRoomService {
     @Override
     public Room updateRoom(Long roomId, String name, String description, String roomType, BigDecimal roomPrice,
                            int floor, int maxNumberAdult, int maxNumberChildren, int maxNumberPeople, int ageLimit,
-                           int numberBed) throws ResourceNotFoundException {
+                           int numberBed, String photo1, String photo2, String photo3,
+                           String photo4, String photo5) throws ResourceNotFoundException, SQLException {
         Room room = roomRepository.findById(roomId)
                 .orElseThrow(() -> new ResourceNotFoundException("Phòng với ID " + roomId + " không được tìm thấy"));
 
@@ -105,6 +114,11 @@ public class RoomService implements IRoomService {
         if (maxNumberPeople != 0) room.setMaxNumberPeople(maxNumberPeople);
         if (ageLimit != 0) room.setAgeLimit(ageLimit);
         if (numberBed != 0) room.setNumberBed(numberBed);
+        room.setPhoto1(base64ToBlob(photo1));
+        room.setPhoto2(base64ToBlob(photo2));
+        room.setPhoto3(base64ToBlob(photo3));
+        room.setPhoto4(base64ToBlob(photo4));
+        room.setPhoto5(base64ToBlob(photo5));
 //        if (photoBytes != null && photoBytes.length > 0) {
 //            try {
 //                room.setPhoto1(new SerialBlob(photoBytes));
@@ -121,16 +135,31 @@ public class RoomService implements IRoomService {
                 .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy phòng ID: " + roomId));
     }
 
-    @Override
-    public Page<Room> getAvailableRooms(LocalDate checkInDate, LocalDate checkOutDate, int numberAdult,
-                                        int numberChildren, int pageNumber, int pageSize) {
-        if (pageNumber < 0 || pageSize < 1) {
-            throw new InvalidPaginationException("Số trang hoặc kích thước trang không hợp lệ");
-        }
-        Pageable pageable = PageRequest.of(pageNumber, pageSize, Sort.by("id").ascending());
-        return roomRepository.findAvailableRoomByFilterStart(checkInDate, checkOutDate, numberAdult,
-                numberChildren, pageable);
+    public Page<Room> getAvailableRooms(
+            LocalDate checkInDate,
+            LocalDate checkOutDate,
+            int numberAdult,
+            int numberChildren,
+            List<Long> serviceIds,
+            BigDecimal minPrice,
+            BigDecimal maxPrice,
+            Boolean hasHighFloor,
+            Boolean hasHighRating,
+            Boolean hasTwoOrMoreBeds,
+            int pageNumber,
+            int pageSize
+    ) {
+        Pageable pageable = PageRequest.of(pageNumber, pageSize);
+        return roomRepository.findAvailableRooms(
+                checkInDate, checkOutDate, numberAdult, numberChildren,
+                serviceIds, minPrice, maxPrice,
+                hasHighFloor != null && hasHighFloor,
+                hasHighRating != null && hasHighRating,
+                hasTwoOrMoreBeds != null && hasTwoOrMoreBeds,
+                pageable
+        );
     }
+
 
     @Override
     public Boolean checkAvailableRoom(Long roomId, LocalDate checkInDate, LocalDate checkOutDate) {
@@ -202,6 +231,12 @@ public class RoomService implements IRoomService {
             return photoBlob.getBytes(1, (int) photoBlob.length());
         }
         return null;
+    }
+
+    public Blob base64ToBlob(String base64) throws SQLException {
+        if (base64 == null) return null;
+        byte[] bytes = Base64.getDecoder().decode(base64.split(",")[1]);
+        return new SerialBlob(bytes);
     }
 
 }

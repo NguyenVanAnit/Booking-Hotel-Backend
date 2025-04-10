@@ -23,9 +23,8 @@ public class HistoryBookingController {
 
     @GetMapping("/all-history")
     public ResponseEntity<ApiResponseDTO<List<HistoryBookingResponse>>> getAllHistoryBookings(
-            @RequestParam int pageNumber, @RequestParam int pageSize,
-                                                                                              @RequestParam Long userId,
-                                                                                              @RequestParam Long roomId) {
+            @RequestParam int pageNumber, @RequestParam int pageSize, @RequestParam Long userId,
+            @RequestParam Long roomId) {
         Page<HistoryBooking> historyBookings = historyBookingService.getHistoryBooking(pageNumber - 1,
                 pageSize, userId, roomId);
 

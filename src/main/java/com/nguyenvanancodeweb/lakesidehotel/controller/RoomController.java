@@ -18,9 +18,12 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -38,7 +41,7 @@ public class RoomController {
     private final BookingService bookingService;
 
     @PostMapping("/add/new-room")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+//    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<ApiResponseDTO<Void>> addNewRoom(
 //            @RequestParam("photo") MultipartFile photo,
             @RequestBody RoomRequest roomRequest
@@ -46,7 +49,9 @@ public class RoomController {
         Room savedRoom = roomService.addNewRoom(roomRequest.getName(), roomRequest.getDescription(),
                 roomRequest.getRoomType(), roomRequest.getRoomPrice(), roomRequest.getFloor(),
                 roomRequest.getMaxNumberAdult(), roomRequest.getMaxNumberChildren(),
-                roomRequest.getMaxNumberPeople(), roomRequest.getAgeLimit(), roomRequest.getNumberBed());
+                roomRequest.getMaxNumberPeople(), roomRequest.getAgeLimit(), roomRequest.getNumberBed(),
+                roomRequest.getPhoto1(), roomRequest.getPhoto2(), roomRequest.getPhoto3(),
+                roomRequest.getPhoto4(), roomRequest.getPhoto5());
 //        RoomResponse response = new RoomResponse(savedRoom.getId(), savedRoom.getRoomType(), savedRoom.getRoomPrice());
         return ResponseEntity.ok(new ApiResponseDTO<>(true, "200"));
     }
@@ -84,7 +89,7 @@ public class RoomController {
     }
 
     @DeleteMapping("/delete/room/{roomId}")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+//    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<ApiResponseDTO<Void>> deleteRoom(@PathVariable Long roomId) {
             roomService.deleteRoom(roomId);
             return ResponseEntity.ok(new ApiResponseDTO<>(true, "Phòng được xóa thành công"));
@@ -92,23 +97,21 @@ public class RoomController {
 
     // thừa exception ResourceNotFoundException
     @PutMapping("/update/room/{roomId}")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<String> updateRoom(@PathVariable Long roomId, @RequestBody RoomRequest roomRequest)
+//    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public ResponseEntity<ApiResponseDTO<Void>> updateRoom(@PathVariable Long roomId, @RequestBody RoomRequest roomRequest)
             throws SQLException, IOException, ResourceNotFoundException {
-//        byte[] photoBytes = photo != null && !photo.isEmpty() ?
-//                photo.getBytes() : roomService.getRoomPhotoByRoomId(roomId);
-//        Blob photoBlob = photoBytes != null && photoBytes.length > 0 ?
-//                new SerialBlob(photoBytes) : null;
         try {
             Room theRoom = roomService.updateRoom(roomId, roomRequest.getName(), roomRequest.getDescription(),
                     roomRequest.getRoomType(), roomRequest.getRoomPrice(), roomRequest.getFloor(),
                     roomRequest.getMaxNumberAdult(), roomRequest.getMaxNumberChildren(),
-                    roomRequest.getMaxNumberPeople(), roomRequest.getAgeLimit(), roomRequest.getNumberBed());
+                    roomRequest.getMaxNumberPeople(), roomRequest.getAgeLimit(), roomRequest.getNumberBed(),
+                    roomRequest.getPhoto1(), roomRequest.getPhoto2(), roomRequest.getPhoto3(), roomRequest.getPhoto4(),
+                    roomRequest.getPhoto5());
 //        theRoom.setPhoto1(photoBlob);
 //        RoomResponse roomResponse = getRoomResponse(theRoom);
-            return ResponseEntity.ok("Cập nhật thông tin phòng thành công");
+            return ResponseEntity.ok(new ApiResponseDTO<>(true, "Cập nhật phòng thành công"));
         } catch (ResourceNotFoundException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body(new ApiResponseDTO<>(false, e.getMessage()));
         }
     }
 
@@ -124,26 +127,41 @@ public class RoomController {
     }
 
     @GetMapping("/available-rooms")
-    public ResponseEntity<Page<AllRoomResponse>> getAvailableRooms(
-            @RequestParam() @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate checkInDate,
-            @RequestParam() @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate checkOutDate,
-            @RequestParam() int numberAdult, @RequestParam() int numberChildren,
+    public ResponseEntity<ApiResponseDTO<List<AllRoomResponse>>> getAvailableRooms(
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate checkInDate,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate checkOutDate,
+            @RequestParam int numberAdult,
+            @RequestParam int numberChildren,
+            @RequestParam(required = false) String serviceIds,
+            @RequestParam(required = false) BigDecimal minPrice,
+            @RequestParam(required = false) BigDecimal maxPrice,
+            @RequestParam(required = false) Boolean hasHighFloor,
+            @RequestParam(required = false) Boolean hasHighRating,
+            @RequestParam(required = false) Boolean hasTwoOrMoreBeds,
             @RequestParam(defaultValue = "1") int pageNumber,
             @RequestParam(defaultValue = "10") int pageSize
-    ) throws SQLException {
-        Page<Room> availableRooms = roomService.getAvailableRooms(checkInDate, checkOutDate, numberAdult,
-                numberChildren, pageNumber - 1, pageSize);
-        Page<AllRoomResponse> allRoomRespons = availableRooms.map(AllRoomResponse::new);
-//        for (Room room : availableRooms) {
-//            byte[] photoBytes = roomService.getRoomPhotoByRoomId(room.getId());
-//            if (photoBytes != null && photoBytes.length > 0) {
-//                String photoBase64 = Base64.encodeBase64String(photoBytes);
-//                AllRoomResponse allRoomResponse = getRoomResponse(room);
-////                allRoomResponse.setPhoto1(photoBase64);
-//                allRoomRespons.add(allRoomResponse);
-//            }
-//        }
-        return ResponseEntity.ok(allRoomRespons);
+    ) {
+        List<Long> serviceIdList = new ArrayList<>();
+        if (serviceIds != null && !serviceIds.isBlank()) {
+            serviceIdList = Arrays.stream(serviceIds.split(","))
+                    .map(String::trim)
+                    .map(Long::parseLong)
+                    .collect(Collectors.toList());
+        }
+        Page<Room> availableRooms = roomService.getAvailableRooms(
+                checkInDate, checkOutDate, numberAdult, numberChildren,
+                serviceIdList, minPrice, maxPrice,
+                hasHighFloor, hasHighRating, hasTwoOrMoreBeds,
+                pageNumber - 1, pageSize
+        );
+
+        List<AllRoomResponse> responseList = availableRooms.getContent()
+                .stream()
+                .map(AllRoomResponse::new)
+                .collect(Collectors.toList());
+
+        DataResponseDTO<List<AllRoomResponse>> dataResponseDTO = new DataResponseDTO<>((int) availableRooms.getTotalElements(), responseList);
+        return ResponseEntity.ok(new ApiResponseDTO<>(true, "200", dataResponseDTO));
     }
 
     @GetMapping("/available-day-in-month")

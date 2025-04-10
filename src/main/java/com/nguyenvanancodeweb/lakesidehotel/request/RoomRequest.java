@@ -20,4 +20,9 @@ public class RoomRequest {
     private int maxNumberPeople;
     private int ageLimit;
     private int numberBed;
+    private String photo1;
+    private String photo2;
+    private String photo3;
+    private String photo4;
+    private String photo5;
 }

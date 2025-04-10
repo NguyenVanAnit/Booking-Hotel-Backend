@@ -9,7 +9,10 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.io.InputStream;
 import java.math.BigDecimal;
+import java.sql.Blob;
+import java.util.Base64;
 import java.util.List;
 
 @Data
@@ -22,6 +25,7 @@ public class AllRoomResponse {
     private String name;
     private String description;
     private Double totalRating;
+    private String photo1;
 
     public AllRoomResponse(Room room) {
         this.id = room.getId();
@@ -30,7 +34,18 @@ public class AllRoomResponse {
         this.roomType = room.getRoomType();
         this.roomPrice = room.getRoomPrice();
         this.totalRating = room.getTotalRating();
-//        this.photo1
+        this.photo1 = blobToBase64(room.getPhoto1());
+    }
+
+    private String blobToBase64(Blob blob) {
+        if (blob == null) return null;
+        try (InputStream is = blob.getBinaryStream()) {
+            byte[] bytes = is.readAllBytes();
+            return "data:image/jpeg;base64," + Base64.getEncoder().encodeToString(bytes);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
 //    public AllRoomResponse(Long id, String roomType, BigDecimal roomPrice) {

@@ -17,7 +17,8 @@ import java.util.Optional;
 public interface IRoomService {
     Room addNewRoom(String name, String description, String roomType, BigDecimal roomPrice, int floor,
                     int maxNumberAdult, int maxNumberChildren, int maxNumberPeople, int ageLimit,
-                    int numberBed) throws SQLException, IOException;
+                    int numberBed, String photo1, String photo2, String photo3, String photo4,
+                    String photo5) throws SQLException, IOException;
 
     List<String> getAllRoomTypes();
 
@@ -29,12 +30,25 @@ public interface IRoomService {
 
     Room updateRoom(Long roomId, String name, String description, String roomType, BigDecimal roomPrice,
                     int floor, int maxNumberAdult, int maxNumberChildren, int maxNumberPeople, int ageLimit,
-                    int numberBed ) throws ResourceNotFoundException;
+                    int numberBed, String photo1, String photo2, String photo3, String photo4,
+                    String photo5 ) throws ResourceNotFoundException, SQLException;
 
     Room getRoomById(Long roomId);
 
-    Page<Room> getAvailableRooms(LocalDate checkInDate, LocalDate checkOutDate, int numberAdult, int numberChildren,
-                                 int pageNumber, int pageSize);
+    Page<Room> getAvailableRooms(
+            LocalDate checkInDate,
+            LocalDate checkOutDate,
+            int numberAdult,
+            int numberChildren,
+            List<Long> serviceIds,
+            BigDecimal minPrice,
+            BigDecimal maxPrice,
+            Boolean hasHighFloor,
+            Boolean hasHighRating,
+            Boolean hasTwoOrMoreBeds,
+            int pageNumber,
+            int pageSize
+    );
 
     Boolean checkAvailableRoom(Long roomId, LocalDate checkInDate, LocalDate checkOutDate);
 
