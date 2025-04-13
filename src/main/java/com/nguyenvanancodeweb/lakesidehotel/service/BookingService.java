@@ -59,7 +59,7 @@ public class BookingService implements IBookingService {
             bookedRoom.setGuestEmail(bookingRequest.getGuestEmail());
             bookedRoom.setNumOfAdults(bookingRequest.getNumOfAdults());
             bookedRoom.setNumOfChildren(bookingRequest.getNumOfChildren());
-            bookedRoom.setPhoneNumber(bookingRequest.getPhoneNumber());
+            bookedRoom.setPhoneNumber(bookingRequest.getPhoneNumberOther());
             bookedRoom.setUserId(bookingRequest.getUserId());
             bookedRoom.setRoom(room);
             bookedRoom.setStatus(0);

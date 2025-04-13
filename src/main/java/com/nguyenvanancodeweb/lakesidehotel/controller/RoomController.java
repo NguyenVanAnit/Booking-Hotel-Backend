@@ -128,8 +128,8 @@ public class RoomController {
 
     @GetMapping("/available-rooms")
     public ResponseEntity<ApiResponseDTO<List<AllRoomResponse>>> getAvailableRooms(
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate checkInDate,
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate checkOutDate,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate checkInDate,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate checkOutDate,
             @RequestParam int numberAdult,
             @RequestParam int numberChildren,
             @RequestParam(required = false) String serviceIds,

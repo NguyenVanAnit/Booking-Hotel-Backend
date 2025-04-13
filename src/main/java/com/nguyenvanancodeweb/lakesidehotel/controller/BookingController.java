@@ -59,7 +59,7 @@ public class BookingController {
     }
 
     @PostMapping("/room/{roomId}/booking")
-    public String saveBooking(@PathVariable Long roomId, @RequestBody BookingRequest bookingRequest,
+    public ResponseEntity<ApiResponseDTO<String>> saveBooking(@PathVariable Long roomId, @RequestBody BookingRequest bookingRequest,
                               HttpServletRequest request) {
         try{
 //            String confirmationCode = bookingService.saveBooking(roomId, bookingRequest);
@@ -70,9 +70,10 @@ public class BookingController {
                     booking.getBookingId().toString(), baseUrl);
 //            String paymentUrl = vnpayService.createPaymentUrl(bookingRequest.getBookingId(), totalPrice.doubleValue());
 //            DataResponseDTO<String> dataResponseDTO = new DataResponseDTO<>(null, paymentUrl);
-            return "redirect:" + vnpayUrl;
+            return ResponseEntity.ok(new ApiResponseDTO<>(true, "Tạo lệnh đặt phòng thành công",
+                    new DataResponseDTO<>(null, vnpayUrl)));
         }catch (InvalidBookingRequestException e){
-            return e.getMessage();
+            return ResponseEntity.badRequest().body(new ApiResponseDTO<>(false, e.getMessage()));
         }
     }
 
@@ -83,13 +84,13 @@ public class BookingController {
         String redirectUrl;
         if (result == 1) {
             // Thành công
-            redirectUrl = "http://localhost:3000/payment-result?status=success";
+            redirectUrl = "http://localhost:5173/payment-result?status=success";
         } else if (result == 0) {
             // Thanh toán thất bại
-            redirectUrl = "http://localhost:3000/payment-result?status=fail";
+            redirectUrl = "http://localhost:5173/payment-result?status=fail";
         } else {
             // Sai checksum
-            redirectUrl = "http://localhost:3000/payment-result?status=invalid";
+            redirectUrl = "http://localhost:5173/payment-result?status=invalid";
         }
 
         response.sendRedirect(redirectUrl);

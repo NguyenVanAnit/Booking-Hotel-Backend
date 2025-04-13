@@ -41,10 +41,13 @@ public interface RoomRepository extends JpaRepository<Room, Long> {
       AND (:hasHighFloor = false OR r.floor > 15)
       AND (:hasHighRating = false OR r.totalRating > 4)
       AND (:hasTwoOrMoreBeds = false OR r.numberBed >= 2)
-      AND r.id NOT IN (
-          SELECT br.room.id FROM BookedRoom br
-          WHERE br.checkInDate < :checkOutDate AND br.checkOutDate > :checkInDate
-      )
+      AND (
+       :checkInDate IS NULL OR :checkOutDate IS NULL
+       OR r.id NOT IN (
+           SELECT br.room.id FROM BookedRoom br
+           WHERE br.checkInDate < :checkOutDate AND br.checkOutDate > :checkInDate
+       )
+     )
       AND (
         :#{#serviceIds == null || #serviceIds.isEmpty()} = true
         OR EXISTS (

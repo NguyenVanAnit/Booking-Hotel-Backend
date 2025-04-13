@@ -15,9 +15,9 @@ public class BookingRequest {
     private String guestEmail;
     private int numOfAdults;
     private int numOfChildren;
-    private String phoneNumber;
+    private String phoneNumberOther;
     private Long roomId;
     private Long userId;
-    private BigDecimal totalPrice;
+//    private BigDecimal totalPrice;
     private List<ServiceBookedRequest> serviceBookedRequests;
 }
