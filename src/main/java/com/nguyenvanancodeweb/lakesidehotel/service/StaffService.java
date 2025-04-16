@@ -14,7 +14,7 @@ public class StaffService implements IStaffService{
 
     @Override
     public Staff addStaff(Staff staff) {
-        staff.setId(null); // Auto-generate
+        staff.setStatus(1);
         return staffRepository.save(staff);
     }
 
@@ -29,9 +29,12 @@ public class StaffService implements IStaffService{
         staff.setPassword(updated.getPassword());
         staff.setHireDate(updated.getHireDate());
         staff.setSalary(updated.getSalary());
-        staff.setPosition(updated.getPosition());
+        staff.setDepartment(updated.getDepartment());
         staff.setRole(updated.getRole());
         staff.setStatus(updated.getStatus());
+        staff.setGender(updated.getGender());
+        staff.setAddress(updated.getAddress());
+        staff.setBirthDate(updated.getBirthDate());
 
         return staffRepository.save(staff);
     }

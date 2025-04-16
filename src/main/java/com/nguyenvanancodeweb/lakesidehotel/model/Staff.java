@@ -26,11 +26,13 @@ public class Staff {
     private String phoneNumber;
     private String email;
     private String password;
-
-    private Integer role;
+    private String address;
+    private Integer role; // 0: nhan vien, 1: to truong, 2: truong phong
     private LocalDate hireDate;
     private BigDecimal salary;
-    private String position;
+    private String department;
+    private Integer gender;
+    private LocalDate birthDate;
 
-    private Integer status;
+    private Integer status; // 1: dang lam viec, 2: nghi viec, 3: bi duoi viec
 }
