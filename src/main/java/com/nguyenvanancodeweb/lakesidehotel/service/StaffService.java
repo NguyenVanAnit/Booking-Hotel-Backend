@@ -23,18 +23,18 @@ public class StaffService implements IStaffService{
         Staff staff = staffRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Staff not found"));
 
-        staff.setFullName(updated.getFullName());
-        staff.setPhoneNumber(updated.getPhoneNumber());
-        staff.setEmail(updated.getEmail());
-        staff.setPassword(updated.getPassword());
-        staff.setHireDate(updated.getHireDate());
-        staff.setSalary(updated.getSalary());
-        staff.setDepartment(updated.getDepartment());
-        staff.setRole(updated.getRole());
-        staff.setStatus(updated.getStatus());
-        staff.setGender(updated.getGender());
-        staff.setAddress(updated.getAddress());
-        staff.setBirthDate(updated.getBirthDate());
+        if(updated.getFullName() != null) staff.setFullName(updated.getFullName());
+        if(updated.getPhoneNumber() != null) staff.setPhoneNumber(updated.getPhoneNumber());
+        if(updated.getEmail() != null) staff.setEmail(updated.getEmail());
+        if(updated.getPassword() != null) staff.setPassword(updated.getPassword());
+        if(updated.getHireDate() != null) staff.setHireDate(updated.getHireDate());
+        if(updated.getSalary() != null) staff.setSalary(updated.getSalary());
+        if(updated.getDepartment() != null) staff.setDepartment(updated.getDepartment());
+        if(updated.getRole() != null) staff.setRole(updated.getRole());
+        if(updated.getStatus() != null) staff.setStatus(updated.getStatus());
+        if(updated.getGender() != null) staff.setGender(updated.getGender());
+        if(updated.getAddress() != null) staff.setAddress(updated.getAddress());
+        if(updated.getBirthDate() != null) staff.setBirthDate(updated.getBirthDate());
 
         return staffRepository.save(staff);
     }
@@ -53,6 +53,12 @@ public class StaffService implements IStaffService{
     @Override
     public List<Staff> getAllStaff() {
         return staffRepository.findAll();
+    }
+
+    @Override
+    public void chageStatus(Long id, Integer status) {
+        Staff staff = getStaffById(id);
+        staff.setStatus(status);
     }
 
     @Override

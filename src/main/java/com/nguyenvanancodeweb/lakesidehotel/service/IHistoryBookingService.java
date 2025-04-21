@@ -8,4 +8,8 @@ public interface IHistoryBookingService {
     HistoryBooking addHistoryBooking(BookedRoom bookedRoom);
 
     Page<HistoryBooking> getHistoryBooking(int pageNumber, int pageSize, Long userId, Long roomId);
+
+    HistoryBooking getHistoryBookingByBooking(Long bookingId);
+
+    void updateStatusHistoryBooking(Long bookingId);
 }

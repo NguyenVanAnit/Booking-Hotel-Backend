@@ -31,5 +31,6 @@ public class HistoryBooking {
     private Room room;
 
     private int status;
+    private Long bookingId;
 
 }

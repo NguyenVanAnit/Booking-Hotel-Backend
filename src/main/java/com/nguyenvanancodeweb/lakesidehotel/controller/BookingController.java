@@ -6,6 +6,7 @@ import com.nguyenvanancodeweb.lakesidehotel.model.BookedRoom;
 import com.nguyenvanancodeweb.lakesidehotel.model.Room;
 import com.nguyenvanancodeweb.lakesidehotel.model.User;
 import com.nguyenvanancodeweb.lakesidehotel.request.BookingRequest;
+import com.nguyenvanancodeweb.lakesidehotel.request.PaymentConfirmationRequest;
 import com.nguyenvanancodeweb.lakesidehotel.response.BookingResponse;
 import com.nguyenvanancodeweb.lakesidehotel.response.DTO.ApiResponseDTO;
 import com.nguyenvanancodeweb.lakesidehotel.response.DTO.DataResponseDTO;
@@ -96,6 +97,13 @@ public class BookingController {
         response.sendRedirect(redirectUrl);
     }
 
+    @PostMapping("/payment/confirm")
+    public ResponseEntity<ApiResponseDTO<Boolean>> confirmPayment(
+            @RequestBody PaymentConfirmationRequest confirmationRequest){
+        Boolean success = bookingService.confirmPayment(confirmationRequest);
+        return ResponseEntity.ok(new ApiResponseDTO<>(true, "200", new DataResponseDTO<>(
+                null, success)));
+    }
 
 //    @GetMapping("/vnpay-payment-return")
 //    public String paymentCompleted(HttpServletRequest request){

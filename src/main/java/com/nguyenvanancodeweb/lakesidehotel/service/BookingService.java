@@ -6,7 +6,9 @@ import com.nguyenvanancodeweb.lakesidehotel.model.BookedRoom;
 import com.nguyenvanancodeweb.lakesidehotel.model.Room;
 import com.nguyenvanancodeweb.lakesidehotel.repository.BookingRepository;
 import com.nguyenvanancodeweb.lakesidehotel.request.BookingRequest;
+import com.nguyenvanancodeweb.lakesidehotel.request.PaymentConfirmationRequest;
 import com.nguyenvanancodeweb.lakesidehotel.request.ServiceBookedRequest;
+import com.nguyenvanancodeweb.lakesidehotel.utils.VNPAYConfig;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -100,6 +102,62 @@ public class BookingService implements IBookingService {
             throw new InvalidBookingRequestException("Không tìm thấy đặt phòng với ID: " + bookingId);
         }
     }
+
+
+
+    @Override
+    public void saveTxnRef(String TxnRef, Long bookingId) {
+        BookedRoom bookedRoom = getBookedRoomById(bookingId);
+        bookedRoom.setTxnRef(TxnRef);
+        bookingRepository.save(bookedRoom);
+    }
+
+    @Override
+    public Boolean confirmPayment(PaymentConfirmationRequest confirmationRequest) {
+        // Lấy các thông tin từ request
+        String vnp_TxnRef = confirmationRequest.getVnp_TxnRef();
+        String vnp_ResponseCode = confirmationRequest.getVnp_ResponseCode();
+//            String vnp_SecureHash = confirmationRequest.getVnp_SecureHash();
+        BookedRoom bookedRoom = getBookingByTxnRef(vnp_TxnRef);
+        // Kiểm tra ResponseCode (nếu là "00" thì là thành công)
+        if (!"00".equals(vnp_ResponseCode)) {
+            bookedRoom.setStatus(2);
+            bookingRepository.save(bookedRoom);
+            historyBookingService.updateStatusHistoryBooking(bookedRoom.getBookingId());
+            return false;
+        }
+        bookedRoom.setStatus(1);
+        bookingRepository.save(bookedRoom);
+        historyBookingService.updateStatusHistoryBooking(bookedRoom.getBookingId());
+        return true;
+    }
+
+    @Override
+    public BookedRoom getBookingByTxnRef(String txnRef) {
+        BookedRoom bookedRoom = bookingRepository.findBookingByTxnRef(txnRef);
+        return bookedRoom;
+    }
+
+
+//            // Đảm bảo checksum chính xác để bảo mật (làm lại secure hash)
+//            String params = buildParamsForHash(confirmationRequest);  // Dựng lại chuỗi tham số
+//            String expectedSecureHash = VNPAYConfig.hmacSHA512(VNPAYConfig.vnp_HashSecret, params);
+//            if (!vnp_SecureHash.equals(expectedSecureHash)) {
+//                return "Dữ liệu không hợp lệ";
+//            }
+//
+//            // Lấy thông tin đặt phòng từ database
+//            BookedRoom booking = bookingService.findBookingByTxnRef(vnp_TxnRef);
+//            if (booking == null) {
+//                return ResponseEntity.badRequest().body(new ApiResponseDTO<>(false, "Không tìm thấy đơn đặt phòng"));
+//            }
+//
+//            // Cập nhật trạng thái của đơn đặt phòng
+//            booking.setStatus("CONFIRMED"); // Hoặc bất kỳ trạng thái nào cho thành công
+//            bookingService.saveBooking(booking); // Lưu thay đổi
+//
+//            return ResponseEntity.ok(new ApiResponseDTO<>(true, "Thanh toán thành công", null));
+//    }
 
     @Override
     public BookedRoom findByBookingConfirmationCode(String confirmationCode) {

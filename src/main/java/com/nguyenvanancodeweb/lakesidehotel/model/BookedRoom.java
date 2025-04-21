@@ -76,4 +76,6 @@ public class BookedRoom {
     @OneToMany(mappedBy = "bookedRoom", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<ServiceBooked> serviceBookeds;
 
+    private String txnRef;
+
 }

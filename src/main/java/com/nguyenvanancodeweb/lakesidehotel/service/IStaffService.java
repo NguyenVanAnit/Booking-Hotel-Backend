@@ -10,6 +10,7 @@ public interface IStaffService {
     void deleteStaff(Long id);
     Staff getStaffById(Long id);
     List<Staff> getAllStaff();
+    void chageStatus(Long id, Integer status);
 
     List<Staff> getByRole(Integer role);
     List<Staff> getByStatus(Integer status);

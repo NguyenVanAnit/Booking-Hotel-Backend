@@ -15,21 +15,22 @@ import java.time.LocalDate;
 @NoArgsConstructor
 public class HistoryBookingResponse {
     private Long id;
-    private User user;
+    private Long userId;
     private LocalDate checkin;
     private LocalDate checkout;
     private BigDecimal price;
-    private Room room;
+    private Long roomId;
+    private String roomName;
     private int status;
-
 
     public HistoryBookingResponse(HistoryBooking historyBooking) {
         this.id = historyBooking.getId();
-        this.user = historyBooking.getUser();
+        this.userId = historyBooking.getUser().getId();
         this.checkin = historyBooking.getCheckin();
         this.checkout = historyBooking.getCheckout();
         this.price = historyBooking.getPrice();
         this.status = historyBooking.getStatus();
-        this.room = historyBooking.getRoom();
+        this.roomId = historyBooking.getRoom().getId();
+        this.roomName = historyBooking.getRoom().getName();
     }
 }

@@ -2,6 +2,7 @@ package com.nguyenvanancodeweb.lakesidehotel.service;
 
 import com.nguyenvanancodeweb.lakesidehotel.utils.VNPAYConfig;
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.io.UnsupportedEncodingException;
@@ -11,7 +12,9 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 @Service
+@RequiredArgsConstructor
 public class VNPAYService {
+    private final IBookingService bookingService;
 
     public String createOrder(HttpServletRequest request, int amount, String orderInfor, String urlReturn){
         //Các bạn có thể tham khảo tài liệu hướng dẫn và điều chỉnh các tham số
@@ -21,6 +24,8 @@ public class VNPAYService {
         String vnp_IpAddr = VNPAYConfig.getIpAddress(request);
         String vnp_TmnCode = VNPAYConfig.vnp_TmnCode;
         String orderType = "order-type";
+
+        bookingService.saveTxnRef(vnp_TxnRef, Long.parseLong(orderInfor));
 
         Map<String, String> vnp_Params = new HashMap<>();
         vnp_Params.put("vnp_Version", vnp_Version);
@@ -36,8 +41,10 @@ public class VNPAYService {
         String locate = "vn";
         vnp_Params.put("vnp_Locale", locate);
 
-        urlReturn += VNPAYConfig.vnp_Returnurl;
-        vnp_Params.put("vnp_ReturnUrl", urlReturn);
+        String returnUrl = "http://localhost:5173/vnpay-return";
+        vnp_Params.put("vnp_ReturnUrl", returnUrl);
+//        urlReturn += VNPAYConfig.vnp_Returnurl;
+//        vnp_Params.put("vnp_ReturnUrl", urlReturn);
         vnp_Params.put("vnp_IpAddr", vnp_IpAddr);
 
         Calendar cld = Calendar.getInstance(TimeZone.getTimeZone("Etc/GMT+7"));

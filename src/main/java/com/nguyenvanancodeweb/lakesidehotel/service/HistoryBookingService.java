@@ -23,6 +23,7 @@ public class HistoryBookingService implements IHistoryBookingService {
         User user = userService.getUserByUserId(bookedRoom.getUserId());
 
         HistoryBooking historyBooking = new HistoryBooking();
+        historyBooking.setBookingId(bookedRoom.getBookingId());
         historyBooking.setCheckin(bookedRoom.getCheckInDate());
         historyBooking.setCheckout(bookedRoom.getCheckOutDate());
         historyBooking.setStatus(bookedRoom.getStatus());
@@ -46,6 +47,18 @@ public class HistoryBookingService implements IHistoryBookingService {
             return historyBookingRepository.findByRoomId(roomId, pageable);
         }
         return historyBookingRepository.findAll(pageable);
+    }
+
+    @Override
+    public HistoryBooking getHistoryBookingByBooking(Long bookingId) {
+        return historyBookingRepository.findByBookingIdCustom(bookingId);
+    }
+
+    @Override
+    public void updateStatusHistoryBooking(Long bookingId) {
+        HistoryBooking historyBooking = getHistoryBookingByBooking(bookingId);
+        historyBooking.setStatus(1);
+        historyBookingRepository.save(historyBooking);
     }
 
 

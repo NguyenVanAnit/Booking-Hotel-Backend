@@ -5,6 +5,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 public interface HistoryBookingRepository extends JpaRepository<HistoryBooking, Long> {
     @Query("SELECT h FROM HistoryBooking h WHERE h.user.id = :userId")
@@ -14,4 +15,7 @@ public interface HistoryBookingRepository extends JpaRepository<HistoryBooking, 
     Page<HistoryBooking> findByRoomId(Long roomId, Pageable pageable);
 
     Page<HistoryBooking> findAll(Pageable pageable);
+
+    @Query("SELECT h FROM HistoryBooking h WHERE h.bookingId = :bookingId")
+    HistoryBooking findByBookingIdCustom(@Param("bookingId") Long bookingId);
 }

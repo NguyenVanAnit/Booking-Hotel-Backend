@@ -53,6 +53,13 @@ public class StaffController {
                 new DataResponseDTO<>(null, all)));
     }
 
+    @PostMapping("/change-status/{staffId}")
+    public ResponseEntity<ApiResponseDTO<String>> changeStaffStatus(@PathVariable Long staffId, Integer status) {
+        staffService.chageStatus(staffId, status);
+        return ResponseEntity.ok(new ApiResponseDTO<>(true, "200",
+                new DataResponseDTO<>(null, "Thay đổi trạng thái thành công")));
+    }
+
     @GetMapping("/search")
     public ResponseEntity<ApiResponseDTO<List<Staff>>> searchByName(@RequestParam String name) {
         List<Staff> result = staffService.searchByName(name);

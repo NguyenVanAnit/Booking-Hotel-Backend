@@ -2,6 +2,7 @@ package com.nguyenvanancodeweb.lakesidehotel.service;
 
 import com.nguyenvanancodeweb.lakesidehotel.model.BookedRoom;
 import com.nguyenvanancodeweb.lakesidehotel.request.BookingRequest;
+import com.nguyenvanancodeweb.lakesidehotel.request.PaymentConfirmationRequest;
 
 import java.util.List;
 
@@ -23,4 +24,10 @@ public interface IBookingService {
     BookedRoom getBookedRoomById(Long bookingId);
 
     void updateBookingStatus(Long bookingId, int status);
+
+    void saveTxnRef(String TxnRef, Long bookingId);
+
+    Boolean confirmPayment(PaymentConfirmationRequest confirmationRequest);
+
+    BookedRoom getBookingByTxnRef(String txnRef);
 }

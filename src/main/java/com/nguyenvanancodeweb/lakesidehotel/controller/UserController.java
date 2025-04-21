@@ -1,6 +1,8 @@
 package com.nguyenvanancodeweb.lakesidehotel.controller;
 
 import com.nguyenvanancodeweb.lakesidehotel.model.User;
+import com.nguyenvanancodeweb.lakesidehotel.response.DTO.ApiResponseDTO;
+import com.nguyenvanancodeweb.lakesidehotel.response.DTO.DataResponseDTO;
 import com.nguyenvanancodeweb.lakesidehotel.service.IUserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -48,5 +50,12 @@ public class UserController {
         }catch (Exception e){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Lỗi khi xóa người dùng");
         }
+    }
+
+    @GetMapping
+    public ResponseEntity<ApiResponseDTO<List<User>>> getAllUsers() {
+        List<User> users = userService.getAllUsers();
+        return ResponseEntity.ok(new ApiResponseDTO<>(true, "200",
+                new DataResponseDTO<>(null, users)));
     }
 }
