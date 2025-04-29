@@ -12,4 +12,6 @@ public interface IHistoryBookingService {
     HistoryBooking getHistoryBookingByBooking(Long bookingId);
 
     void updateStatusHistoryBooking(Long bookingId);
+
+    void updateIsCheckedHistoryBooking(Long bookingId, int isChecked);
 }

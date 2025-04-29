@@ -22,6 +22,8 @@ public class HistoryBookingResponse {
     private Long roomId;
     private String roomName;
     private int status;
+    private Long bookingId;
+    private int isChecked;
 
     public HistoryBookingResponse(HistoryBooking historyBooking) {
         this.id = historyBooking.getId();
@@ -32,5 +34,7 @@ public class HistoryBookingResponse {
         this.status = historyBooking.getStatus();
         this.roomId = historyBooking.getRoom().getId();
         this.roomName = historyBooking.getRoom().getName();
+        this.bookingId = historyBooking.getBookingId();
+        this.isChecked = historyBooking.getIsChecked();
     }
 }

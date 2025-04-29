@@ -4,6 +4,7 @@ import com.nguyenvanancodeweb.lakesidehotel.model.Rate;
 import com.nguyenvanancodeweb.lakesidehotel.request.RateRequest;
 import com.nguyenvanancodeweb.lakesidehotel.response.DTO.ApiResponseDTO;
 import com.nguyenvanancodeweb.lakesidehotel.response.DTO.DataResponseDTO;
+import com.nguyenvanancodeweb.lakesidehotel.response.RateDto;
 import com.nguyenvanancodeweb.lakesidehotel.service.RateService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -25,15 +26,15 @@ public class RateController {
     }
 
     @GetMapping("/get-by-room-id")
-    public ResponseEntity<ApiResponseDTO<List<Rate>>> getRateListByRoomId(@RequestParam int pageNumber,
-                                                                          @RequestParam int pageSize,
-                                                                          @RequestParam Long roomId){
-        Page<Rate> rates = rateService.getRateListByRoomId(pageNumber, pageSize, roomId);
-        List<Rate> rateList = rates.getContent().stream().toList();
-
-        DataResponseDTO<List<Rate>> dataResponseDTO = new DataResponseDTO<>((int) rates.getTotalElements(), rateList);
-        return ResponseEntity.ok(new ApiResponseDTO<List<Rate>>(true, "200", dataResponseDTO));
+    public ResponseEntity<ApiResponseDTO<List<RateDto>>> getRateListByRoomId(@RequestParam int pageNumber,
+                                                                             @RequestParam int pageSize,
+                                                                             @RequestParam Long roomId) {
+        Page<RateDto> rates = rateService.getRateListByRoomId(pageNumber, pageSize, roomId);
+        DataResponseDTO<List<RateDto>> dataResponseDTO = new DataResponseDTO<>((int) rates.getTotalElements(), rates.getContent());
+        return ResponseEntity.ok(new ApiResponseDTO<>(true, "200", dataResponseDTO));
     }
+
+
 
     @DeleteMapping("/delete-rate")
     public ResponseEntity<ApiResponseDTO<Void>> deleteRate(@RequestParam Long rateId){

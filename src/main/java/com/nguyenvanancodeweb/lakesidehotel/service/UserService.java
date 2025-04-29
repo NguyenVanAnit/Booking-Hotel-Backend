@@ -6,6 +6,7 @@ import com.nguyenvanancodeweb.lakesidehotel.model.Role;
 import com.nguyenvanancodeweb.lakesidehotel.model.User;
 import com.nguyenvanancodeweb.lakesidehotel.repository.RoleRepository;
 import com.nguyenvanancodeweb.lakesidehotel.repository.UserRepository;
+import com.nguyenvanancodeweb.lakesidehotel.response.UserResponse;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -65,5 +66,17 @@ public class UserService implements IUserService {
     @Override
     public List<User> getAllUsers() {
         return userRepository.findAll();
+    }
+
+    @Override
+    public UserResponse getUserResponse(String email) {
+        User user = getUser(email);
+        UserResponse userResponse = new UserResponse();
+        userResponse.setEmail(user.getEmail());
+        userResponse.setId(user.getId());
+        userResponse.setFullName(user.getFullName());
+        userResponse.setPhoneNumber(user.getPhoneNumber());
+        userResponse.setRoleId(userResponse.getRoleId());
+        return userResponse;
     }
 }

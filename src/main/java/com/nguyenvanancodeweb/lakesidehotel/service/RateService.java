@@ -6,6 +6,7 @@ import com.nguyenvanancodeweb.lakesidehotel.model.Room;
 import com.nguyenvanancodeweb.lakesidehotel.model.User;
 import com.nguyenvanancodeweb.lakesidehotel.repository.RateRepository;
 import com.nguyenvanancodeweb.lakesidehotel.request.RateRequest;
+import com.nguyenvanancodeweb.lakesidehotel.response.RateDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -39,12 +40,13 @@ public class RateService implements IRateService {
     }
 
     @Override
-    public Page<Rate> getRateListByRoomId(int pageNumber, int pageSize, Long roomId) {
-        roomService.getRoomById(roomId); //check phong ton tai
+    public Page<RateDto> getRateListByRoomId(int pageNumber, int pageSize, Long roomId) {
+        roomService.getRoomById(roomId);
         Pageable pageable = PageRequest.of(pageNumber, pageSize);
         Page<Rate> rates = rateRepository.findRateByRoomId(roomId, pageable);
-        return rates;
+        return rates.map(RateDto::new); // Page<RateDto>
     }
+
 
     @Override
     public void deleteRate(Long id) {

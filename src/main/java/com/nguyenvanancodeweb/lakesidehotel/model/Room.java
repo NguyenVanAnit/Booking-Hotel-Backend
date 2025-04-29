@@ -27,7 +27,7 @@ public class Room {
     private String name;
     private String description;
     private int floor;
-    private int state;
+    private int state; // 0 - bình thường, 1 - đang
     private int maxNumberAdult;
     private int maxNumberChildren;
     private int maxNumberPeople;

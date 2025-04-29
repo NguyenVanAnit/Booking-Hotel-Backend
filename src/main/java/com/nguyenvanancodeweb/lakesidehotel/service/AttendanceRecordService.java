@@ -3,20 +3,24 @@ package com.nguyenvanancodeweb.lakesidehotel.service;
 import com.nguyenvanancodeweb.lakesidehotel.model.AttendanceRecord;
 import com.nguyenvanancodeweb.lakesidehotel.model.Staff;
 import com.nguyenvanancodeweb.lakesidehotel.repository.AttendanceRecordRepository;
+import com.nguyenvanancodeweb.lakesidehotel.response.StaffAttendanceSummaryDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.YearMonth;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class AttendanceRecordService implements IAttendanceRecordService{
     private final AttendanceRecordRepository recordRepo;
+    private final IStaffService staffService;
 
     public AttendanceRecord checkIn(Long staffId) {
         LocalDate today = LocalDate.now();
@@ -67,6 +71,33 @@ public class AttendanceRecordService implements IAttendanceRecordService{
         result.put("absentDays", absentDates.size());
         result.put("absentDates", absentDates);
         return result;
+    }
+
+    @Override
+    public List<StaffAttendanceSummaryDto> getStaffAttendanceSummary(int month, int year) {
+        List<Staff> staffList = staffService.getAllStaff();
+
+        return staffList.stream()
+                .map(staff -> {
+                    int present = recordRepo.countPresentDays(staff.getId(), month, year);
+                    int absent = recordRepo.countAbsentDays(staff.getId(), month, year);
+
+                    BigDecimal salary = staff.getSalary();
+                    BigDecimal totalSalary = salary.multiply(BigDecimal.valueOf(present));
+
+                    StaffAttendanceSummaryDto dto = new StaffAttendanceSummaryDto();
+                    dto.setStaffId(staff.getId());
+                    dto.setFullName(staff.getFullName());
+                    dto.setEmail(staff.getEmail());
+                    dto.setPhoneNumber(staff.getPhoneNumber());
+                    dto.setDepartment(staff.getDepartment());
+                    dto.setDaysPresent(present);
+                    dto.setDaysAbsent(absent);
+                    dto.setTotalSalary(totalSalary);
+
+                    return dto;
+                })
+                .collect(Collectors.toList());
     }
 
 }

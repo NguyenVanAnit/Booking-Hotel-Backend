@@ -21,10 +21,14 @@ public interface AttendanceRecordRepository extends JpaRepository<AttendanceReco
     @Query("SELECT COUNT(a) FROM AttendanceRecord a WHERE a.staffId = :staffId AND a.date BETWEEN :start AND :end AND a.isAbsent = false")
     long countWorkingDays(@Param("staffId") Long staffId, @Param("start") LocalDate start, @Param("end") LocalDate end);
 
-    @Query("SELECT COUNT(a) FROM AttendanceRecord a WHERE a.staffId = :staffId AND a.date BETWEEN :start AND :end AND a.isAbsent = true")
-    long countAbsentDays(@Param("staffId") Long staffId, @Param("start") LocalDate start, @Param("end") LocalDate end);
-
     @Query("SELECT a.date FROM AttendanceRecord a WHERE a.staffId = :staffId AND a.date BETWEEN :start AND :end AND a.isAbsent = false")
     List<LocalDate> findAbsentDates(@Param("staffId") Long staffId, @Param("start") LocalDate start, @Param("end") LocalDate end);
+
+    @Query("SELECT COUNT(a) FROM AttendanceRecord a WHERE a.staffId = :staffId AND a.isAbsent = false AND MONTH(a.date) = :month AND YEAR(a.date) = :year")
+    int countPresentDays(@Param("staffId") Long staffId, @Param("month") int month, @Param("year") int year);
+
+    @Query("SELECT COUNT(a) FROM AttendanceRecord a WHERE a.staffId = :staffId AND a.isAbsent = true AND MONTH(a.date) = :month AND YEAR(a.date) = :year")
+    int countAbsentDays(@Param("staffId") Long staffId, @Param("month") int month, @Param("year") int year);
+
 
 }

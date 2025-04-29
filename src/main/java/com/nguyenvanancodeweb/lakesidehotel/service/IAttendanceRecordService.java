@@ -1,6 +1,7 @@
 package com.nguyenvanancodeweb.lakesidehotel.service;
 
 import com.nguyenvanancodeweb.lakesidehotel.model.AttendanceRecord;
+import com.nguyenvanancodeweb.lakesidehotel.response.StaffAttendanceSummaryDto;
 
 import java.time.YearMonth;
 import java.util.List;
@@ -13,4 +14,5 @@ public interface IAttendanceRecordService {
     List<Long> getStaffCheckedOutToday();
     Map<String, Long> getMonthlyStats(Long staffId, YearMonth month);
     Map<String, Object> getAttendanceSummary(Long staffId, int year, int month);
+    List<StaffAttendanceSummaryDto> getStaffAttendanceSummary(int month, int year);
 }

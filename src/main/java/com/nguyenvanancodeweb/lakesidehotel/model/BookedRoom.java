@@ -16,7 +16,6 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class BookedRoom {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long bookingId;
@@ -43,7 +42,7 @@ public class BookedRoom {
     @Column(name = "booking_time")
     private String bookingTime;
 
-//    0 - Chờ thanh toán, 1 - Đã thanh toán, 2 - Không thành công, 3 - Đã hủy
+//    0 - Chờ thanh toán, 1 - Đã thanh toán thành công, 2 - Không thành công, 3 - Đã hủy, 4 - Đã từ chối
 //    @Column(name = "status", nullable = false)
     private int status = 0;
 
@@ -77,5 +76,8 @@ public class BookedRoom {
     private List<ServiceBooked> serviceBookeds;
 
     private String txnRef;
+
+    // 0 chua checkin, 1 da checkin, 2 da checkout
+    private Integer isChecked;
 
 }

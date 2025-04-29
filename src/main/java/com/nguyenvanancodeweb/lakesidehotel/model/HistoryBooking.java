@@ -32,5 +32,6 @@ public class HistoryBooking {
 
     private int status;
     private Long bookingId;
+    private int isChecked;
 
 }

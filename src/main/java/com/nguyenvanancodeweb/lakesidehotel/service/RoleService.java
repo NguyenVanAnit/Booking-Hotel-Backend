@@ -67,7 +67,7 @@ public class RoleService implements IRoleService {
         Optional<Role>  role = roleRepository.findById(roleId);
         if (user.isPresent() && user.get().getRoles().contains(role.get())){
             throw new UserAlreadyExistsException(
-                    user.get().getFirstName()+ " is already assigned to the" + role.get().getName()+ " role");
+                    user.get().getFullName()+ " is already assigned to the" + role.get().getName()+ " role");
         }
         if (role.isPresent()){
             role.get().assignRoleToUser(user.get());

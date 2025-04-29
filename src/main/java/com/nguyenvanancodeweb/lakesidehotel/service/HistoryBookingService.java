@@ -30,6 +30,7 @@ public class HistoryBookingService implements IHistoryBookingService {
         historyBooking.setPrice(bookedRoom.getTotalPrice());
         historyBooking.setUser(user);
         historyBooking.setRoom(bookedRoom.getRoom());
+        historyBooking.setIsChecked(bookedRoom.getIsChecked());
         return historyBookingRepository.save(historyBooking);
     }
 
@@ -58,6 +59,13 @@ public class HistoryBookingService implements IHistoryBookingService {
     public void updateStatusHistoryBooking(Long bookingId) {
         HistoryBooking historyBooking = getHistoryBookingByBooking(bookingId);
         historyBooking.setStatus(1);
+        historyBookingRepository.save(historyBooking);
+    }
+
+    @Override
+    public void updateIsCheckedHistoryBooking(Long bookingId, int isChecked) {
+        HistoryBooking historyBooking = getHistoryBookingByBooking(bookingId);
+        historyBooking.setIsChecked(isChecked);
         historyBookingRepository.save(historyBooking);
     }
 

@@ -3,6 +3,7 @@ package com.nguyenvanancodeweb.lakesidehotel.controller;
 import com.nguyenvanancodeweb.lakesidehotel.model.User;
 import com.nguyenvanancodeweb.lakesidehotel.response.DTO.ApiResponseDTO;
 import com.nguyenvanancodeweb.lakesidehotel.response.DTO.DataResponseDTO;
+import com.nguyenvanancodeweb.lakesidehotel.response.UserResponse;
 import com.nguyenvanancodeweb.lakesidehotel.service.IUserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -12,6 +13,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @CrossOrigin(origins = "http://localhost:5173")
 @RestController
@@ -27,15 +29,17 @@ public class UserController {
     }
 
     @GetMapping("/{email}")
-    @PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
+//    @PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
     public ResponseEntity<?> getUserByEmail(@PathVariable("email") String email) {
         try{
-            User theUser = userService.getUser(email);
-            return ResponseEntity.ok(theUser);
+            UserResponse userResponse = userService.getUserResponse(email);
+            return ResponseEntity.ok(new ApiResponseDTO<>(true, "200", new DataResponseDTO<>(
+                    null, userResponse
+            )));
         }catch (UsernameNotFoundException e){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponseDTO<>(false, e.getMessage()));
         }catch (Exception e){
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponseDTO<>(false, e.getMessage()));
         }
     }
 
@@ -53,9 +57,12 @@ public class UserController {
     }
 
     @GetMapping
-    public ResponseEntity<ApiResponseDTO<List<User>>> getAllUsers() {
+    public ResponseEntity<ApiResponseDTO<List<UserResponse>>> getAllUsers() {
         List<User> users = userService.getAllUsers();
+        List<UserResponse> responseList = users.stream()
+                .map(UserResponse::new) // gọi constructor bạn đã viết
+                .collect(Collectors.toList());
         return ResponseEntity.ok(new ApiResponseDTO<>(true, "200",
-                new DataResponseDTO<>(null, users)));
+                new DataResponseDTO<>(null, responseList)));
     }
 }

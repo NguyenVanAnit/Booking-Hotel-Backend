@@ -26,11 +26,22 @@ public class BookingResponse {
 
     private Long roomId;
 
-//    private AllRoomResponse room;
+    private int NumOfChildren;
 
-    public BookingResponse(Long bookingId, LocalDate checkInDate, LocalDate checkOutDate, String bookingConfirmationCode, String bookingTime) {
-        this.bookingId = bookingId;
-        this.checkInDate = checkInDate;
-        this.checkOutDate = checkOutDate;
-    }
+    private int NumOfAdults;
+
+    private String bookingConfirmationCode;
+
+    private String bookingTime;
+
+    private String guestName;
+
+    private String roomName;
+
+    private String phoneNumber;
+
+    private String email;
+
+    private int isChecked;
+
 }
