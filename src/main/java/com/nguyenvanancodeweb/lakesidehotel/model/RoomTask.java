@@ -25,8 +25,8 @@ public class RoomTask {
     @ManyToOne
     private Staff staff;
 
-    private Integer taskType; // 0 - Dọn dẹp | 1 - Bảo trì | 2 - Kiểm tra
-    private Integer status; // 0 - Chưa làm | 1 - Đang làm | 2 - Hoàn thành | 3 - Bị huỷ
+    private Integer taskType; // 0 - Dọn dẹp hàng ngày | 1 - Bảo trì | 2 - Kiểm tra | 3 - Dọn dẹp sau checkout
+    private Integer status; // 0 - Chưa làm | 1 - Hoàn thành | 2 - Bị huỷ
 
     private LocalDate assignedDate;
     private LocalDate completedDate;

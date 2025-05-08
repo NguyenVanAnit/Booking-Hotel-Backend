@@ -45,7 +45,7 @@ public interface RoomRepository extends JpaRepository<Room, Long> {
        :checkInDate IS NULL OR :checkOutDate IS NULL
        OR r.id NOT IN (
            SELECT br.room.id FROM BookedRoom br
-           WHERE br.checkInDate < :checkOutDate AND br.checkOutDate > :checkInDate
+           WHERE br.checkInDate <= :checkOutDate AND br.checkOutDate >= :checkInDate AND br.status = 1
        )
      )
       AND (

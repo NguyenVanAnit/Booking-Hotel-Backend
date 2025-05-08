@@ -5,12 +5,16 @@ import com.nguyenvanancodeweb.lakesidehotel.model.BookedRoom;
 import com.nguyenvanancodeweb.lakesidehotel.model.HistoryBooking;
 import com.nguyenvanancodeweb.lakesidehotel.model.User;
 import com.nguyenvanancodeweb.lakesidehotel.repository.HistoryBookingRepository;
+import com.nguyenvanancodeweb.lakesidehotel.response.HistoryBookingResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDate;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -67,6 +71,15 @@ public class HistoryBookingService implements IHistoryBookingService {
         HistoryBooking historyBooking = getHistoryBookingByBooking(bookingId);
         historyBooking.setIsChecked(isChecked);
         historyBookingRepository.save(historyBooking);
+    }
+
+    @Override
+    public List<HistoryBookingResponse> findHistoryBookingByCheckoutDate(LocalDate checkout) {
+        List<HistoryBooking> bookings = historyBookingRepository.findByCheckout(checkout);
+        List<HistoryBookingResponse> responses = bookings.stream()
+                .map(HistoryBookingResponse::new)
+                .toList();
+        return responses;
     }
 
 

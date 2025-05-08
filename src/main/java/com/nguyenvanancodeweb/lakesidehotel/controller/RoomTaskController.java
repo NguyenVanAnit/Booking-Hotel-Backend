@@ -4,6 +4,7 @@ import com.nguyenvanancodeweb.lakesidehotel.model.RoomTask;
 import com.nguyenvanancodeweb.lakesidehotel.response.DTO.ApiResponseDTO;
 import com.nguyenvanancodeweb.lakesidehotel.response.DTO.DataResponseDTO;
 import com.nguyenvanancodeweb.lakesidehotel.response.TaskDto;
+import com.nguyenvanancodeweb.lakesidehotel.response.ThongkeTaskDto;
 import com.nguyenvanancodeweb.lakesidehotel.service.RoomTaskService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -75,5 +76,18 @@ public class RoomTaskController {
                     e.getMessage()
             ));
         }
+    }
+
+    @GetMapping("/staff")
+    public ResponseEntity<ApiResponseDTO<List<ThongkeTaskDto>>> getStaffTaskStatsByMonth(
+            @RequestParam int month,
+            @RequestParam int year
+    ) {
+        List<ThongkeTaskDto> tasks = roomTaskService.getStaffTaskStatsByMonth(month, year);
+        return ResponseEntity.ok(new ApiResponseDTO<>(
+                true,
+                "Lấy danh sách task theo tháng/năm thành công",
+                new DataResponseDTO<>(null, tasks)
+        ));
     }
 }

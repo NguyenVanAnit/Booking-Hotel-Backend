@@ -3,6 +3,7 @@ package com.nguyenvanancodeweb.lakesidehotel.controller;
 import com.nguyenvanancodeweb.lakesidehotel.exception.UserAlreadyExistsException;
 import com.nguyenvanancodeweb.lakesidehotel.model.User;
 import com.nguyenvanancodeweb.lakesidehotel.request.LoginRequest;
+import com.nguyenvanancodeweb.lakesidehotel.request.RegisterRequest;
 import com.nguyenvanancodeweb.lakesidehotel.response.JwtResponse;
 import com.nguyenvanancodeweb.lakesidehotel.security.jwt.JwtUtils;
 import com.nguyenvanancodeweb.lakesidehotel.security.user.HotelUserDetails;
@@ -37,9 +38,9 @@ public class AuthController {
     private final JwtUtils jwtUtils;
 
     @PostMapping("/register-user")
-    public ResponseEntity<?> registerUser(@RequestBody User user){
+    public ResponseEntity<?> registerUser(@RequestBody RegisterRequest requestUser){
         try{
-            userService.registerUser(user);
+            userService.registerUser(requestUser);
             return ResponseEntity.ok("Registration successful!");
 
         }catch (UserAlreadyExistsException e){

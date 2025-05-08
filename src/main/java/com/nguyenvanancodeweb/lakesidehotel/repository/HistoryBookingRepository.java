@@ -7,6 +7,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.time.LocalDate;
+import java.util.List;
+
 public interface HistoryBookingRepository extends JpaRepository<HistoryBooking, Long> {
     @Query("SELECT h FROM HistoryBooking h WHERE h.user.id = :userId")
     Page<HistoryBooking> findByUserId(Long userId, Pageable pageable);
@@ -18,4 +21,6 @@ public interface HistoryBookingRepository extends JpaRepository<HistoryBooking, 
 
     @Query("SELECT h FROM HistoryBooking h WHERE h.bookingId = :bookingId")
     HistoryBooking findByBookingIdCustom(@Param("bookingId") Long bookingId);
+
+    List<HistoryBooking> findByCheckout(LocalDate checkout);
 }

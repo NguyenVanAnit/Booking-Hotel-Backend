@@ -7,12 +7,14 @@ import com.nguyenvanancodeweb.lakesidehotel.response.HistoryBookingResponse;
 import com.nguyenvanancodeweb.lakesidehotel.service.IHistoryBookingService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -38,5 +40,18 @@ public class HistoryBookingController {
                 dataResponseDTO);
         return ResponseEntity.ok(apiResponseDTO) ;
     }
+
+    @GetMapping("/by-checkout")
+    public ResponseEntity<ApiResponseDTO<List<HistoryBookingResponse>>> getByCheckout(
+            @RequestParam("date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
+        List<HistoryBookingResponse> historyBookingResponses = historyBookingService
+                .findHistoryBookingByCheckoutDate(date);
+        DataResponseDTO<List<HistoryBookingResponse>> dataResponseDTO = new DataResponseDTO<>(
+                (int) historyBookingResponses.size(), historyBookingResponses);
+        return ResponseEntity.ok(new ApiResponseDTO<>(true, "Lấy danh sách phòng theo ngày checkout",
+                dataResponseDTO));
+    }
+
+
 
 }

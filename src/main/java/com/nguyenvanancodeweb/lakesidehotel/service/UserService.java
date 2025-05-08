@@ -6,6 +6,7 @@ import com.nguyenvanancodeweb.lakesidehotel.model.Role;
 import com.nguyenvanancodeweb.lakesidehotel.model.User;
 import com.nguyenvanancodeweb.lakesidehotel.repository.RoleRepository;
 import com.nguyenvanancodeweb.lakesidehotel.repository.UserRepository;
+import com.nguyenvanancodeweb.lakesidehotel.request.RegisterRequest;
 import com.nguyenvanancodeweb.lakesidehotel.response.UserResponse;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Service;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Random;
 
 @Service
 @RequiredArgsConstructor
@@ -25,15 +27,22 @@ public class UserService implements IUserService {
     private final RoleRepository roleRepository;
 
     @Override
-    public User registerUser(User user) {
-        if(userRepository.existsByEmail(user.getEmail())){
-            throw new UserAlreadyExistsException(user.getEmail() + " đã tồn tại");
+    public void registerUser(RegisterRequest requestUser) {
+        if(userRepository.existsByEmail(requestUser.getEmail())){
+            throw new UserAlreadyExistsException("Email " + requestUser.getEmail() + " đã tồn tại");
         }
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        if(userRepository.existsByPhoneNumber(requestUser.getPhoneNumber())){
+            throw new UserAlreadyExistsException("Số điện thoại "+ requestUser.getPhoneNumber() + " đã tồn tại");
+        }
+        User user = new User();
+        user.setEmail(requestUser.getEmail());
+        user.setFullName(requestUser.getFullName());
+        user.setPhoneNumber(requestUser.getPhoneNumber());
+        user.setPassword(passwordEncoder.encode(requestUser.getPassword()));
         System.out.println(user.getPassword());
         Role userRole = roleRepository.findByName("ROLE_USER").get();
         user.setRoles(Collections.singletonList(userRole));
-        return userRepository.save(user);
+        userRepository.save(user);
     }
 
     @Override

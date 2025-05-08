@@ -34,7 +34,6 @@ public class User {
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<HistoryBooking> historyBookings = new ArrayList<>();
-
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Rate> rates = new ArrayList<>();
 }

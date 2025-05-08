@@ -7,6 +7,7 @@ import com.nguyenvanancodeweb.lakesidehotel.repository.RoomRepository;
 import com.nguyenvanancodeweb.lakesidehotel.repository.RoomTaskRepository;
 import com.nguyenvanancodeweb.lakesidehotel.repository.StaffRepository;
 import com.nguyenvanancodeweb.lakesidehotel.response.TaskDto;
+import com.nguyenvanancodeweb.lakesidehotel.response.ThongkeTaskDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -63,5 +64,9 @@ public class RoomTaskService {
         }
 
         return roomTaskRepository.save(task);
+    }
+
+    public List<ThongkeTaskDto> getStaffTaskStatsByMonth(int month, int year) {
+        return roomTaskRepository.getTaskStatsForAllStaffByMonth(month, year);
     }
 }

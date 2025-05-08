@@ -187,8 +187,7 @@ public class BookingService implements IBookingService {
 
     @Override
     public BookedRoom getBookingByTxnRef(String txnRef) {
-        BookedRoom bookedRoom = bookingRepository.findBookingByTxnRef(txnRef);
-        return bookedRoom;
+        return bookingRepository.findBookingByTxnRef(txnRef);
     }
 
     @Override
