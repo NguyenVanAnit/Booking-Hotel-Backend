@@ -1,6 +1,7 @@
 package com.nguyenvanancodeweb.lakesidehotel.service;
 
 import com.nguyenvanancodeweb.lakesidehotel.model.Staff;
+import com.nguyenvanancodeweb.lakesidehotel.response.StaffAttendanceSummaryDto;
 
 import java.util.List;
 
@@ -18,4 +19,6 @@ public interface IStaffService {
 
     long countByRole(Integer role);
     long countByStatus(Integer status);
+
+    StaffAttendanceSummaryDto login(String phoneNumber, String password);
 }

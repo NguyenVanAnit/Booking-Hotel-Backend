@@ -1,8 +1,10 @@
 package com.nguyenvanancodeweb.lakesidehotel.controller;
 
 import com.nguyenvanancodeweb.lakesidehotel.model.Staff;
+import com.nguyenvanancodeweb.lakesidehotel.request.LoginStaffRequest;
 import com.nguyenvanancodeweb.lakesidehotel.response.DTO.ApiResponseDTO;
 import com.nguyenvanancodeweb.lakesidehotel.response.DTO.DataResponseDTO;
+import com.nguyenvanancodeweb.lakesidehotel.response.StaffAttendanceSummaryDto;
 import com.nguyenvanancodeweb.lakesidehotel.service.IStaffService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -93,5 +95,12 @@ public class StaffController {
         long count = staffService.countByStatus(status);
         return ResponseEntity.ok(new ApiResponseDTO<>(true, "200",
                 new DataResponseDTO<>(null, count)));
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<ApiResponseDTO<StaffAttendanceSummaryDto>> login(@RequestBody LoginStaffRequest request) {
+        StaffAttendanceSummaryDto staffResponse = staffService.login(request.getPhoneNumber(), request.getPassword());
+        return ResponseEntity.ok(new ApiResponseDTO<>(true, "Đăng nhập thành công",
+                new DataResponseDTO<>(null, staffResponse)));
     }
 }

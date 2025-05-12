@@ -26,6 +26,7 @@ public class AllRoomResponse {
     private String description;
     private Double totalRating;
     private String photo1;
+    private int floor;
 
     public AllRoomResponse(Room room) {
         this.id = room.getId();
@@ -35,6 +36,7 @@ public class AllRoomResponse {
         this.roomPrice = room.getRoomPrice();
         this.totalRating = room.getTotalRating();
         this.photo1 = blobToBase64(room.getPhoto1());
+        this.floor = room.getFloor();
     }
 
     private String blobToBase64(Blob blob) {

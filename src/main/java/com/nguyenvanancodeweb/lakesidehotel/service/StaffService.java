@@ -2,10 +2,12 @@ package com.nguyenvanancodeweb.lakesidehotel.service;
 
 import com.nguyenvanancodeweb.lakesidehotel.model.Staff;
 import com.nguyenvanancodeweb.lakesidehotel.repository.StaffRepository;
+import com.nguyenvanancodeweb.lakesidehotel.response.StaffAttendanceSummaryDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -86,5 +88,22 @@ public class StaffService implements IStaffService{
     public long countByStatus(Integer status) {
         return staffRepository.findAll().stream()
                 .filter(s -> s.getStatus().equals(status)).count();
+    }
+
+    public StaffAttendanceSummaryDto login(String phoneNumber, String password) {
+        Optional<Staff> staffOptional = staffRepository.findByPhoneNumberAndPassword(phoneNumber, password);
+
+        if (staffOptional.isPresent()) {
+            StaffAttendanceSummaryDto staffResponse = new StaffAttendanceSummaryDto();
+            staffResponse.setStaffId(staffOptional.get().getId());
+            staffResponse.setFullName(staffOptional.get().getFullName());
+            staffResponse.setPhoneNumber(staffOptional.get().getPhoneNumber());
+            staffResponse.setEmail(staffOptional.get().getEmail());
+            staffResponse.setDepartment(staffOptional.get().getDepartment());
+
+            return staffResponse;
+        } else {
+            throw new RuntimeException("Số điện thoại hoặc mật khẩu không đúng");
+        }
     }
 }
