@@ -1,6 +1,7 @@
 package com.nguyenvanancodeweb.lakesidehotel.service;
 
 import com.nguyenvanancodeweb.lakesidehotel.model.User;
+import com.nguyenvanancodeweb.lakesidehotel.request.CreateAccountRequest;
 import com.nguyenvanancodeweb.lakesidehotel.request.RegisterRequest;
 import com.nguyenvanancodeweb.lakesidehotel.response.UserResponse;
 
@@ -14,4 +15,6 @@ public interface IUserService {
     User getUserByUserId(Long userId);
     List<User> getAllUsers();
     UserResponse getUserResponse(String email);
+    void changePassword(String email, String oldPassword, String newPassword);
+    String createAccount(CreateAccountRequest requestUser);
 }

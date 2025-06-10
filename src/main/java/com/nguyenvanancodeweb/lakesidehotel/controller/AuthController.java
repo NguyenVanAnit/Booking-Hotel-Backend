@@ -2,8 +2,12 @@ package com.nguyenvanancodeweb.lakesidehotel.controller;
 
 import com.nguyenvanancodeweb.lakesidehotel.exception.UserAlreadyExistsException;
 import com.nguyenvanancodeweb.lakesidehotel.model.User;
+import com.nguyenvanancodeweb.lakesidehotel.request.ChangePasswordRequest;
+import com.nguyenvanancodeweb.lakesidehotel.request.CreateAccountRequest;
 import com.nguyenvanancodeweb.lakesidehotel.request.LoginRequest;
 import com.nguyenvanancodeweb.lakesidehotel.request.RegisterRequest;
+import com.nguyenvanancodeweb.lakesidehotel.response.DTO.ApiResponseDTO;
+import com.nguyenvanancodeweb.lakesidehotel.response.DTO.DataResponseDTO;
 import com.nguyenvanancodeweb.lakesidehotel.response.JwtResponse;
 import com.nguyenvanancodeweb.lakesidehotel.security.jwt.JwtUtils;
 import com.nguyenvanancodeweb.lakesidehotel.security.user.HotelUserDetails;
@@ -78,5 +82,39 @@ public class AuthController {
         // Xóa thông tin xác thực khỏi SecurityContext
         SecurityContextHolder.clearContext();
         return ResponseEntity.ok("Đăng xuất thành công");
+    }
+
+    @PostMapping("/change-password")
+    public ResponseEntity<ApiResponseDTO<Void>> changePassword(@RequestBody ChangePasswordRequest request) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if (authentication == null || !authentication.isAuthenticated()){
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ApiResponseDTO<>(false,
+                    "Chưa xác thực tài khoản"));
+        }
+
+        try {
+            HotelUserDetails userDetails = (HotelUserDetails) authentication.getPrincipal();
+            String userEmail = userDetails.getEmail();
+
+            userService.changePassword(userEmail, request.getOldPassword(), request.getNewPassword());
+
+            return ResponseEntity.ok(new ApiResponseDTO<>(true, "Đổi mật khẩu thành công"));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ApiResponseDTO<>(false,
+                    "Phiên đăng nhập hết hạn"));
+        }
+    }
+
+    @PostMapping("/create-user")
+    public ResponseEntity<ApiResponseDTO<String>> createAccount(@RequestBody CreateAccountRequest request) {
+        try{
+            String rawPassword = userService.createAccount(request);
+            return ResponseEntity.ok(new ApiResponseDTO<>(true, "Tạo tài khoản thành công",
+                    new DataResponseDTO<>(null, rawPassword)));
+
+        }catch (UserAlreadyExistsException e){
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(new ApiResponseDTO<>(false, e.getMessage()));
+        }
     }
 }
