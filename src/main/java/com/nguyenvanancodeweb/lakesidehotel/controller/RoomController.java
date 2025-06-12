@@ -31,7 +31,7 @@ import java.util.stream.Collectors;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/rooms")
-@CrossOrigin(origins = "http://localhost:5173")
+//@CrossOrigin(origins = "http://localhost:5173")
 public class RoomController {
     // Tại sao không khai báo RoomService roomService mà khai báo như dưới, có hợp lệ?
     // Dependency Injection (DI) trong Spring: Khi khai báo như dưới, Sring sẽ tự động tìm kiếm và tiêm
