@@ -26,7 +26,7 @@ public class RoomTask {
     private Staff staff;
 
     private Integer taskType; // 0 - Dọn dẹp hàng ngày | 1 - Bảo trì | 2 - Kiểm tra | 3 - Dọn dẹp sau checkout
-    private Integer status; // 0 - Chưa làm | 1 - Hoàn thành | 2 - Bị huỷ
+    private Integer status; // 0 - Chưa làm | 1 - Hoàn thành | 2 - Bị huỷ | 3 - Xác nhận hoàn thành (xong) | 4 - Làm lại (tương tự 1)
 
     private LocalDate assignedDate;
     private LocalDate completedDate;
