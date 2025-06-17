@@ -55,12 +55,15 @@ public class UserService implements IUserService {
 
     @Transactional
     @Override
-    public void deleteUser(String email) {
-        User theUser = getUser(email);
-        if(theUser != null){
-            userRepository.deleteByEmail(email);
-        }
+    public void deleteUser(Long id) {
+        User theUser = getUserByUserId(id);
+        if (theUser != null) {
+            // Clear quan hệ với Role để tránh lỗi foreign key
+            theUser.getRoles().clear();
+            userRepository.save(theUser); // cập nhật lại trước khi xóa
 
+            userRepository.deleteById(id);
+        }
     }
 
     @Override
@@ -88,7 +91,10 @@ public class UserService implements IUserService {
         userResponse.setId(user.getId());
         userResponse.setFullName(user.getFullName());
         userResponse.setPhoneNumber(user.getPhoneNumber());
-        userResponse.setRoleId(userResponse.getRoleId());
+        if (!user.getRoles().isEmpty()) {
+            Role role = user.getRoles().iterator().next();
+            userResponse.setRoleId(role.getId());
+        }
         return userResponse;
     }
 

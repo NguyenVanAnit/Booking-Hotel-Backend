@@ -44,10 +44,10 @@ public class UserController {
     }
 
     @DeleteMapping("/delete/{userId}")
-    @PreAuthorize("hasRole('ROLE_ADMIN') or (hasRole('ROLE_USER') and #email == principal.username)")
-    public ResponseEntity<String> deleteUser(@PathVariable("userId") String email) {
+//    @PreAuthorize("hasRole('ROLE_ADMIN') or (hasRole('ROLE_USER') and #email == principal.username)")
+    public ResponseEntity<String> deleteUser(@PathVariable("userId") Long id) {
         try{
-            userService.deleteUser(email);
+            userService.deleteUser(id);
             return ResponseEntity.ok("Xóa người dùng thành công");
         }catch (UsernameNotFoundException e){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());

@@ -10,7 +10,7 @@ import java.util.List;
 public interface IUserService {
     void registerUser(RegisterRequest requestUser);
     List<User> getUsers();
-    void deleteUser(String email);
+    void deleteUser(Long id);
     User getUser(String email);
     User getUserByUserId(Long userId);
     List<User> getAllUsers();

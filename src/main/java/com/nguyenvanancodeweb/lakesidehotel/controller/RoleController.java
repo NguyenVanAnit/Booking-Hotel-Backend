@@ -3,6 +3,9 @@ package com.nguyenvanancodeweb.lakesidehotel.controller;
 import com.nguyenvanancodeweb.lakesidehotel.exception.RoleAlreadyExistException;
 import com.nguyenvanancodeweb.lakesidehotel.model.Role;
 import com.nguyenvanancodeweb.lakesidehotel.model.User;
+import com.nguyenvanancodeweb.lakesidehotel.response.DTO.ApiResponseDTO;
+import com.nguyenvanancodeweb.lakesidehotel.response.DTO.DataResponseDTO;
+import com.nguyenvanancodeweb.lakesidehotel.response.RoleDTO;
 import com.nguyenvanancodeweb.lakesidehotel.service.IRoleService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -21,8 +24,9 @@ public class RoleController {
     private final IRoleService roleService;
 
     @GetMapping("/all-roles")
-    public ResponseEntity<List<Role>> getAllRoles(){
-        return new ResponseEntity<>(roleService.getRoles(), FOUND);
+    public ResponseEntity<ApiResponseDTO<List<RoleDTO>>> getAllRoles() {
+        return ResponseEntity.ok(new ApiResponseDTO<>(true, "200",
+                new DataResponseDTO<>(null, roleService.getRoles()))); // 200 OK mặc định
     }
 
     @PostMapping("/create-new-role")

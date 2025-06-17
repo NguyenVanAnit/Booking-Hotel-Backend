@@ -1,5 +1,6 @@
 package com.nguyenvanancodeweb.lakesidehotel.service;
 
+import com.nguyenvanancodeweb.lakesidehotel.exception.ResourceNotFoundException;
 import com.nguyenvanancodeweb.lakesidehotel.model.Staff;
 import com.nguyenvanancodeweb.lakesidehotel.repository.StaffRepository;
 import com.nguyenvanancodeweb.lakesidehotel.response.StaffAttendanceSummaryDto;
@@ -93,17 +94,24 @@ public class StaffService implements IStaffService{
     public StaffAttendanceSummaryDto login(String phoneNumber, String password) {
         Optional<Staff> staffOptional = staffRepository.findByPhoneNumberAndPassword(phoneNumber, password);
 
-        if (staffOptional.isPresent()) {
-            StaffAttendanceSummaryDto staffResponse = new StaffAttendanceSummaryDto();
-            staffResponse.setStaffId(staffOptional.get().getId());
-            staffResponse.setFullName(staffOptional.get().getFullName());
-            staffResponse.setPhoneNumber(staffOptional.get().getPhoneNumber());
-            staffResponse.setEmail(staffOptional.get().getEmail());
-            staffResponse.setDepartment(staffOptional.get().getDepartment());
-
-            return staffResponse;
-        } else {
-            throw new RuntimeException("Số điện thoại hoặc mật khẩu không đúng");
+        if (staffOptional.isEmpty()) {
+            throw new ResourceNotFoundException("Không tồn tại số điện thoại" + phoneNumber);
         }
+
+        Staff staff = staffOptional.get();
+
+        if (!staff.getPassword().equals(password)) {
+            throw new ResourceNotFoundException("Số điện thoại hoặc mật khẩu không đúng");
+        }
+
+        StaffAttendanceSummaryDto staffResponse = new StaffAttendanceSummaryDto();
+        staffResponse.setStaffId(staffOptional.get().getId());
+        staffResponse.setFullName(staffOptional.get().getFullName());
+        staffResponse.setPhoneNumber(staffOptional.get().getPhoneNumber());
+        staffResponse.setEmail(staffOptional.get().getEmail());
+        staffResponse.setDepartment(staffOptional.get().getDepartment());
+
+        return staffResponse;
+
     }
 }

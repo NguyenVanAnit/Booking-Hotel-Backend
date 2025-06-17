@@ -6,12 +6,14 @@ import com.nguyenvanancodeweb.lakesidehotel.model.Role;
 import com.nguyenvanancodeweb.lakesidehotel.model.User;
 import com.nguyenvanancodeweb.lakesidehotel.repository.RoleRepository;
 import com.nguyenvanancodeweb.lakesidehotel.repository.UserRepository;
+import com.nguyenvanancodeweb.lakesidehotel.response.RoleDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * @author Simpson Alfred
@@ -24,9 +26,13 @@ public class RoleService implements IRoleService {
     private final UserRepository userRepository;
 
     @Override
-    public List<Role> getRoles() {
-        return roleRepository.findAll();
+    public List<RoleDTO> getRoles() {
+        return roleRepository.findAll()
+                .stream()
+                .map(role -> new RoleDTO(role.getId(), role.getName()))
+                .collect(Collectors.toList());
     }
+
 
     @Override
     public Role createRole(Role theRole) {
